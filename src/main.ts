@@ -70,6 +70,27 @@ function render(): void {
   const app = document.getElementById("app");
   if (!app) return;
 
+  // Track focused element before clearing DOM
+  const activeEl = document.activeElement as HTMLInputElement | null;
+  let focusData: { type: string; index: string | undefined } | null = null;
+
+  if (activeEl) {
+    // Identify by class and data-index
+    if (activeEl.classList.contains("diner-input")) {
+      focusData = { type: "diner", index: activeEl.dataset.index };
+    } else if (activeEl.classList.contains("dish-name-input")) {
+      focusData = { type: "dish-name", index: activeEl.dataset.index };
+    } else if (activeEl.classList.contains("dish-qty-input")) {
+      focusData = { type: "dish-qty", index: activeEl.dataset.index };
+    } else if (activeEl.classList.contains("dish-price-input")) {
+      focusData = { type: "dish-price", index: activeEl.dataset.index };
+    } else if (activeEl.classList.contains("totals-input")) {
+      // For totals inputs, identify by label (tax, tip, total)
+      const label = activeEl.closest(".input-group")?.querySelector("label")?.textContent?.toLowerCase();
+      focusData = { type: "totals-" + (label || "unknown"), index: undefined };
+    }
+  }
+
   // Clear existing content
   app.innerHTML = "";
 
@@ -88,6 +109,39 @@ function render(): void {
   // Render Individual Shares section
   const sharesSection = renderSharesSection();
   app.appendChild(sharesSection);
+
+  // Restore focus after render
+  if (focusData) {
+    setTimeout(() => {
+      let selector: string | null = null;
+      if (focusData!.type === "diner") {
+        selector = `.diner-input[data-index="${focusData!.index}"]`;
+      } else if (focusData!.type === "dish-name") {
+        selector = `.dish-name-input[data-index="${focusData!.index}"]`;
+      } else if (focusData!.type === "dish-qty") {
+        selector = `.dish-qty-input[data-index="${focusData!.index}"]`;
+      } else if (focusData!.type === "dish-price") {
+        selector = `.dish-price-input[data-index="${focusData!.index}"]`;
+      } else if (focusData!.type.startsWith("totals-")) {
+        const labelText = focusData!.type.replace("totals-", "");
+        // Find input group with matching label
+        const groups = document.querySelectorAll(".input-group");
+        for (const group of groups) {
+          const label = group.querySelector("label")?.textContent?.toLowerCase();
+          if (label === labelText) {
+            const input = group.querySelector<HTMLInputElement>(".totals-input");
+            input?.focus();
+            return;
+          }
+        }
+      }
+
+      if (selector) {
+        const element = document.querySelector<HTMLInputElement>(selector);
+        element?.focus();
+      }
+    }, 0);
+  }
 }
 
 /**
