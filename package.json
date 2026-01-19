@@ -1,0 +1,17 @@
+{
+  "name": "splits",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "bun build ./src/index.html --minify --outdir=dist",
+    "test": "bun test",
+    "dev": "bun build ./src/index.html --outdir=dist --watch"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
