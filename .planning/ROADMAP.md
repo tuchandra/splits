@@ -54,18 +54,18 @@ Plans:
 - [x] 02-03-PLAN.md - Assignment chips, unassigned warnings, live Individual Shares
 
 ### Phase 3: Polish
-**Goal**: Users can see final results and efficiently use keyboard shortcuts
+**Goal**: Enhanced output display with item breakdown, clipboard export, and keyboard-only data entry flow
 **Depends on**: Phase 2
 **Requirements**: OUT-01, OUT-02, UX-02
 **Success Criteria** (what must be TRUE):
-  1. User can see final amount each person owes (clear display)
-  2. User can export/copy a summary with items, who had them, and amounts
-  3. Keyboard shortcuts work for common actions on desktop
-**Plans**: TBD
+  1. User can see final amount each person owes with expandable item breakdown
+  2. User can copy a plain text summary to clipboard
+  3. Keyboard-only data entry works (Tab flow, Enter to add new rows)
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Output display and export summary
-- [ ] 03-02: Keyboard shortcuts for desktop
+- [ ] 03-01-PLAN.md - Expandable share breakdown and Copy Summary button
+- [ ] 03-02-PLAN.md - Keyboard entry flow (Enter key, focus preservation)
 
 ## Progress
 
