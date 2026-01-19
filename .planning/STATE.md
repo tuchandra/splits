@@ -5,35 +5,35 @@
 See: .planning/PROJECT.md (updated 2025-01-18)
 
 **Core value:** Quickly and accurately split a restaurant bill so everyone pays their fair share
-**Current focus:** Phase 1 - Foundation
+**Current focus:** Phase 2 - Core UI
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-01-19 - Completed 01-01-PLAN.md (Project Setup)
+Phase: 1 of 3 (Foundation) - COMPLETE
+Plan: 2 of 2 in current phase
+Status: Phase complete - ready for Phase 2
+Last activity: 2026-01-19 - Completed 01-02-PLAN.md (Bill Calculation Engine)
 
-Progress: [█░░░░░░░░░] 14% (1/7 plans)
+Progress: [██░░░░░░░░] 29% (2/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 2 min
-- Total execution time: 2 min
+- Total plans completed: 2
+- Average duration: 2.5 min
+- Total execution time: 5 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1. Foundation | 1/2 | 2 min | 2 min |
+| 1. Foundation | 2/2 | 5 min | 2.5 min |
 | 2. Core UI | 0/3 | - | - |
 | 3. Polish | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min)
-- Trend: N/A (first plan)
+- Last 5 plans: 01-01 (2 min), 01-02 (3 min)
+- Trend: Stable (~2-3 min per plan)
 
 *Updated after each plan completion*
 
@@ -47,6 +47,9 @@ Recent decisions affecting current work:
 - Used Bun's native tooling exclusively (no Vite, no Jest)
 - Used relative paths in HTML for subdirectory deployment compatibility
 - Configured tsconfig with DOM lib for browser API support
+- Integer cents for all money values (no floating point)
+- Largest remainder method for proportional allocation
+- Round-robin distribution for even splits with remainders
 
 ### Pending Todos
 
@@ -59,5 +62,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 01-01-PLAN.md (Project Setup)
+Stopped at: Completed 01-02-PLAN.md (Bill Calculation Engine)
 Resume file: None
