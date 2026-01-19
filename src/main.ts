@@ -249,6 +249,16 @@ function renderDishesSection(): HTMLElement {
       render();
     });
 
+    // Enter key moves to qty input
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const row = (e.target as HTMLElement).closest(".dish-card");
+        const qtyInput = row?.querySelector<HTMLInputElement>(".dish-qty-input");
+        qtyInput?.focus();
+      }
+    });
+
     // Quantity input
     const qtyInput = document.createElement("input");
     qtyInput.type = "number";
@@ -264,6 +274,16 @@ function renderDishesSection(): HTMLElement {
       // Allow qty=0 (comped/removed items) but default NaN to 1
       state.dishes[idx]!.quantity = isNaN(val) ? 1 : Math.max(0, val);
       render();
+    });
+
+    // Enter key moves to price input
+    qtyInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const row = (e.target as HTMLElement).closest(".dish-card");
+        const priceInput = row?.querySelector<HTMLInputElement>(".dish-price-input");
+        priceInput?.focus();
+      }
     });
 
     // Price input (dollars for UX, stored as cents)
@@ -284,9 +304,12 @@ function renderDishesSection(): HTMLElement {
       render();
     });
 
-    // Tab flow: if last row and has name, create new dish on Tab
+    // Tab/Enter flow: if last row and has name, create new dish; else move to next row
     priceInput.addEventListener("keydown", (e) => {
-      if (e.key === "Tab" && !e.shiftKey) {
+      const isTab = e.key === "Tab" && !e.shiftKey;
+      const isEnter = e.key === "Enter";
+
+      if (isTab || isEnter) {
         const idx = Number((e.target as HTMLInputElement).dataset.index);
         const isLastRow = idx === state.dishes.length - 1;
         const currentDish = state.dishes[idx];
@@ -311,7 +334,13 @@ function renderDishesSection(): HTMLElement {
               lastNameInput.focus();
             }
           }, 0);
+        } else if (isEnter && !isLastRow) {
+          // Enter on non-last row moves to next dish's name input
+          e.preventDefault();
+          const nextNameInput = document.querySelectorAll<HTMLInputElement>(".dish-name-input")[idx + 1];
+          nextNameInput?.focus();
         }
+        // Tab on non-last row follows natural tab order
       }
     });
 
