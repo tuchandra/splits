@@ -370,50 +370,59 @@ export default function App() {
           <div className="flex gap-4 flex-wrap">
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-gray-500">Tax</label>
-              <input
-                type="number"
-                value={taxCents > 0 ? (taxCents / 100).toFixed(2) : ''}
-                onChange={(e) => setTaxCents(parseDollars(e.target.value))}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
-                }}
-                placeholder="0.00"
-                className="border rounded px-3 py-2 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                step="0.01"
-              />
+              <div className="relative w-24">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <input
+                  type="number"
+                  value={taxCents > 0 ? (taxCents / 100).toFixed(2) : ''}
+                  onChange={(e) => setTaxCents(parseDollars(e.target.value))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                  }}
+                  placeholder="0.00"
+                  className="border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  step="0.01"
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-gray-500">Tip</label>
-              <input
-                type="number"
-                value={tipCents > 0 ? (tipCents / 100).toFixed(2) : ''}
-                onChange={(e) => setTipCents(parseDollars(e.target.value))}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
-                }}
-                placeholder="0.00"
-                className="border rounded px-3 py-2 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                step="0.01"
-              />
+              <div className="relative w-24">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <input
+                  type="number"
+                  value={tipCents > 0 ? (tipCents / 100).toFixed(2) : ''}
+                  onChange={(e) => setTipCents(parseDollars(e.target.value))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                  }}
+                  placeholder="0.00"
+                  className="border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  step="0.01"
+                />
+              </div>
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-gray-500">Total (from receipt)</label>
-              <input
-                type="number"
-                value={totalCents !== null ? (totalCents / 100).toFixed(2) : ''}
-                onChange={(e) => {
-                  const val = e.target.value
-                  setTotalCents(val === '' ? null : parseDollars(val))
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
-                }}
-                placeholder="0.00"
-                className={`border rounded px-3 py-2 w-28 text-right focus:outline-none focus:ring-2 ${
-                  hasMismatch ? 'border-yellow-500 bg-yellow-50 focus:ring-yellow-500' : 'focus:ring-blue-500'
-                }`}
-                step="0.01"
-              />
+              <div className="relative w-28">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <input
+                  type="number"
+                  value={totalCents !== null ? (totalCents / 100).toFixed(2) : ''}
+                  onChange={(e) => {
+                    const val = e.target.value
+                    setTotalCents(val === '' ? null : parseDollars(val))
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                  }}
+                  placeholder="0.00"
+                  className={`border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 ${
+                    hasMismatch ? 'border-yellow-500 bg-yellow-50 focus:ring-yellow-500' : 'focus:ring-blue-500'
+                  }`}
+                  step="0.01"
+                />
+              </div>
               {hasMismatch && totalCents !== null && (
                 <div className="text-xs text-yellow-700">
                   Off by {formatCents(Math.abs(totalCents - calculatedTotalCents))}
