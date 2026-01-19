@@ -231,7 +231,7 @@ describe("calculateBill", () => {
     });
 
     expect(result.unassignedItems).toHaveLength(1);
-    expect(result.unassignedItems[0].id).toBe("2");
+    expect(result.unassignedItems[0]?.id).toBe("2");
   });
 
   test("total equals sum of shares (no lost pennies)", () => {
