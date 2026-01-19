@@ -5,34 +5,34 @@
 See: .planning/PROJECT.md (updated 2025-01-18)
 
 **Core value:** Quickly and accurately split a restaurant bill so everyone pays their fair share
-**Current focus:** Phase 2 - Core UI
+**Current focus:** Phase 2 - Core UI (complete)
 
 ## Current Position
 
-Phase: 2 of 3 (Core UI)
-Plan: 2 of 3 in current phase
-Status: In progress
-Last activity: 2026-01-19 - Completed 02-02-PLAN.md (Dish Entry and Bill Totals)
+Phase: 2 of 3 (Core UI) - COMPLETE
+Plan: 3 of 3 in current phase
+Status: Phase complete
+Last activity: 2026-01-19 - Completed 02-03-PLAN.md (Assignment and Individual Shares)
 
-Progress: [█████░░░░░] 57% (4/7 plans)
+Progress: [███████░░░] 71% (5/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 2.75 min
-- Total execution time: 11 min
+- Total plans completed: 5
+- Average duration: 3 min
+- Total execution time: 15 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 5 min | 2.5 min |
-| 2. Core UI | 2/3 | 6 min | 3 min |
+| 2. Core UI | 3/3 | 10 min | 3.3 min |
 | 3. Polish | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 02-01 (4 min), 02-02 (2 min)
+- Last 5 plans: 01-02 (3 min), 02-01 (4 min), 02-02 (2 min), 02-03 (4 min)
 - Trend: Stable (~3 min per plan)
 
 *Updated after each plan completion*
@@ -56,6 +56,9 @@ Recent decisions affecting current work:
 - Empty diners kept in array, filtered via getNamedDiners for display
 - Tab-through only creates new row if current dish has a name
 - Amber/yellow warning color for validation mismatch
+- Chip toggle pattern: filled/blue = assigned, outlined = not
+- Only named diners appear as chips (empty diner inputs filtered)
+- Allow qty=0 for comped/removed items
 
 ### Pending Todos
 
@@ -68,5 +71,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-01-19
-Stopped at: Completed 02-02-PLAN.md (Dish Entry and Bill Totals)
+Stopped at: Completed 02-03-PLAN.md (Assignment and Individual Shares) - Phase 2 complete
 Resume file: None
