@@ -127,6 +127,22 @@ function renderDinersSection(): HTMLElement {
       render();
     });
 
+    // Enter key adds new diner
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        state.diners.push("");
+        saveDiners(state.diners);
+        render();
+        // Focus new input after render
+        setTimeout(() => {
+          const inputs = document.querySelectorAll<HTMLInputElement>(".diner-input");
+          const lastInput = inputs[inputs.length - 1];
+          lastInput?.focus();
+        }, 0);
+      }
+    });
+
     // Delete button
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
