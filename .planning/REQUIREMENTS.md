@@ -61,30 +61,30 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENTRY-01 | TBD | Pending |
-| ENTRY-02 | TBD | Pending |
-| ENTRY-03 | TBD | Pending |
-| ENTRY-04 | TBD | Pending |
-| ASSIGN-01 | TBD | Pending |
-| ASSIGN-02 | TBD | Pending |
-| ASSIGN-03 | TBD | Pending |
-| ASSIGN-04 | TBD | Pending |
-| CALC-01 | TBD | Pending |
-| CALC-02 | TBD | Pending |
-| CALC-03 | TBD | Pending |
-| OUT-01 | TBD | Pending |
-| OUT-02 | TBD | Pending |
-| FRIEND-01 | TBD | Pending |
-| FRIEND-02 | TBD | Pending |
-| FRIEND-03 | TBD | Pending |
-| UX-01 | TBD | Pending |
-| UX-02 | TBD | Pending |
+| ENTRY-01 | Phase 2 | Pending |
+| ENTRY-02 | Phase 2 | Pending |
+| ENTRY-03 | Phase 2 | Pending |
+| ENTRY-04 | Phase 2 | Pending |
+| ASSIGN-01 | Phase 2 | Pending |
+| ASSIGN-02 | Phase 2 | Pending |
+| ASSIGN-03 | Phase 2 | Pending |
+| ASSIGN-04 | Phase 2 | Pending |
+| CALC-01 | Phase 1 | Pending |
+| CALC-02 | Phase 1 | Pending |
+| CALC-03 | Phase 1 | Pending |
+| OUT-01 | Phase 3 | Pending |
+| OUT-02 | Phase 3 | Pending |
+| FRIEND-01 | Phase 2 | Pending |
+| FRIEND-02 | Phase 2 | Pending |
+| FRIEND-03 | Phase 2 | Pending |
+| UX-01 | Phase 2 | Pending |
+| UX-02 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 (pending roadmap)
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2025-01-18*
-*Last updated: 2025-01-18 after initial definition*
+*Last updated: 2025-01-18 after roadmap creation*
