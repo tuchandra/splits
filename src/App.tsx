@@ -305,9 +305,10 @@ export default function App() {
           <div className="space-y-3">
             {dishes.map((dish, dishIndex) => {
               const hasContent = dish.name.trim() || dish.priceCents > 0
-              const isIncomplete = dish.name.trim() && dish.priceCents === 0
+              const missingPrice = dish.name.trim() && dish.priceCents === 0
+              const missingQty = hasContent && dish.quantity === 0
               const hasNoDiners = dish.diners.length === 0 && hasContent
-              const hasWarning = hasNoDiners || isIncomplete
+              const hasWarning = hasNoDiners || missingPrice || missingQty
               return (
                 <div
                   key={dish.id}
@@ -325,13 +326,20 @@ export default function App() {
                     />
                     <input
                       type="number"
-                      value={dish.quantity}
-                      onChange={(e) => updateDish(dishIndex, 'quantity', parseInt(e.target.value) || 1)}
+                      value={activeInputs[`qty-${dish.id}`] ?? (dish.quantity || '')}
+                      onFocus={(e) => setActiveInputs(prev => ({ ...prev, [`qty-${dish.id}`]: e.target.value }))}
+                      onChange={(e) => setActiveInputs(prev => ({ ...prev, [`qty-${dish.id}`]: e.target.value }))}
+                      onBlur={(e) => {
+                        updateDish(dishIndex, 'quantity', parseInt(e.target.value) || 0)
+                        setActiveInputs(prev => { const next = { ...prev }; delete next[`qty-${dish.id}`]; return next })
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                       }}
                       placeholder="Qty"
-                      className="border rounded px-3 py-2 w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`border rounded px-3 py-2 w-16 text-center focus:outline-none focus:ring-2 ${
+                        missingQty ? 'border-red-300 focus:ring-red-500' : 'focus:ring-blue-500'
+                      }`}
                       min="1"
                     />
                     <div className="flex items-center gap-1">
@@ -351,7 +359,7 @@ export default function App() {
                           }}
                           placeholder="0.00"
                           className={`border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 ${
-                            isIncomplete ? 'border-red-300 focus:ring-red-500' : 'focus:ring-blue-500'
+                            missingPrice ? 'border-red-300 focus:ring-red-500' : 'focus:ring-blue-500'
                           }`}
                           step="0.01"
                         />
@@ -381,11 +389,13 @@ export default function App() {
                       <Trash2 size={20} />
                     </button>
                   </div>
-                  {(hasNoDiners || isIncomplete) && (
+                  {hasWarning && (
                     <div className="text-sm text-yellow-700">
-                      {isIncomplete && 'Missing price'}
-                      {isIncomplete && hasNoDiners && ' · '}
-                      {hasNoDiners && 'No diners assigned'}
+                      {[
+                        missingPrice && 'Missing price',
+                        missingQty && 'Missing quantity',
+                        hasNoDiners && 'No diners assigned',
+                      ].filter(Boolean).join(' · ')}
                     </div>
                   )}
                   <div className="flex flex-wrap gap-2">
