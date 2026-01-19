@@ -10,29 +10,29 @@ See: .planning/PROJECT.md (updated 2025-01-18)
 ## Current Position
 
 Phase: 2 of 3 (Core UI)
-Plan: 1 of 3 in current phase
+Plan: 2 of 3 in current phase
 Status: In progress
-Last activity: 2026-01-18 - Completed 02-01-PLAN.md (App State and Diner Entry)
+Last activity: 2026-01-19 - Completed 02-02-PLAN.md (Dish Entry and Bill Totals)
 
-Progress: [███░░░░░░░] 43% (3/7 plans)
+Progress: [█████░░░░░] 57% (4/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 3 min
-- Total execution time: 9 min
+- Total plans completed: 4
+- Average duration: 2.75 min
+- Total execution time: 11 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 5 min | 2.5 min |
-| 2. Core UI | 1/3 | 4 min | 4 min |
+| 2. Core UI | 2/3 | 6 min | 3 min |
 | 3. Polish | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 02-01 (4 min)
+- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 02-01 (4 min), 02-02 (2 min)
 - Trend: Stable (~3 min per plan)
 
 *Updated after each plan completion*
@@ -54,6 +54,8 @@ Recent decisions affecting current work:
 - Simple full re-render pattern instead of granular DOM updates
 - localStorage key 'splits-diners' for diner preset persistence
 - Empty diners kept in array, filtered via getNamedDiners for display
+- Tab-through only creates new row if current dish has a name
+- Amber/yellow warning color for validation mismatch
 
 ### Pending Todos
 
@@ -65,6 +67,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-18
-Stopped at: Completed 02-01-PLAN.md (App State and Diner Entry)
+Last session: 2026-01-19
+Stopped at: Completed 02-02-PLAN.md (Dish Entry and Bill Totals)
 Resume file: None
