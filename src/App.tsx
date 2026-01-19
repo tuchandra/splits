@@ -299,12 +299,15 @@ export default function App() {
           <h2 className="text-lg font-semibold mb-3">Dishes</h2>
           <div className="space-y-3">
             {dishes.map((dish, dishIndex) => {
-              const hasNoDiners = dish.diners.length === 0 && (dish.name || dish.priceCents > 0)
+              const hasContent = dish.name.trim() || dish.priceCents > 0
+              const isIncomplete = dish.name.trim() && dish.priceCents === 0
+              const hasNoDiners = dish.diners.length === 0 && hasContent
+              const hasWarning = hasNoDiners || isIncomplete
               return (
                 <div
                   key={dish.id}
                   className={`p-3 border rounded-lg space-y-2 ${
-                    hasNoDiners ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200'
+                    hasWarning ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200'
                   }`}
                 >
                   <div className="flex gap-2 flex-wrap">
@@ -337,7 +340,9 @@ export default function App() {
                             if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                           }}
                           placeholder="0.00"
-                          className="border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className={`border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 ${
+                            isIncomplete ? 'border-red-300 focus:ring-red-500' : 'focus:ring-blue-500'
+                          }`}
                           step="0.01"
                         />
                       </div>
@@ -366,9 +371,11 @@ export default function App() {
                       <Trash2 size={20} />
                     </button>
                   </div>
-                  {hasNoDiners && (
+                  {(hasNoDiners || isIncomplete) && (
                     <div className="text-sm text-yellow-700">
-                      No diners assigned to this dish
+                      {isIncomplete && 'Missing price'}
+                      {isIncomplete && hasNoDiners && ' · '}
+                      {hasNoDiners && 'No diners assigned'}
                     </div>
                   )}
                   <div className="flex flex-wrap gap-2">
