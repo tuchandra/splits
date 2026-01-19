@@ -675,6 +675,77 @@ function renderBillTotalsSection(): HTMLElement {
 }
 
 /**
+ * Get the number of diners assigned to an item (for split annotation).
+ */
+function getItemSplitCount(itemId: string): number {
+  const dish = state.dishes.find((d) => d.id === itemId);
+  if (!dish) return 1;
+  const namedDiners = getNamedDiners();
+  return dish.assignedTo.filter((name) => namedDiners.includes(name)).length;
+}
+
+/**
+ * Build BillInput from current state (shared by renderSharesSection and generateSummary).
+ */
+function buildBillInput(): BillInput | null {
+  const namedDiners = getNamedDiners();
+  const namedDishes = state.dishes.filter((d) => d.name.trim() !== "");
+
+  if (namedDiners.length === 0 || namedDishes.length === 0) {
+    return null;
+  }
+
+  return {
+    items: namedDishes.map((d) => ({
+      id: d.id,
+      name: d.name,
+      amountCents: d.quantity * d.unitPriceCents,
+      assignedTo: d.assignedTo.filter((name) => namedDiners.includes(name)),
+    })),
+    taxCents: state.taxCents,
+    tipCents: state.tipCents,
+    feesCents: 0,
+    participants: namedDiners,
+  };
+}
+
+/**
+ * Generate a plain text summary of the bill split.
+ */
+function generateSummary(): string {
+  const billInput = buildBillInput();
+  if (!billInput) {
+    return "No bill to summarize";
+  }
+
+  const result = calculateBill(billInput);
+  const lines: string[] = [];
+
+  lines.push("Bill Split Summary");
+  lines.push("==================");
+  lines.push("");
+
+  for (const share of result.shares) {
+    lines.push(`${share.personId}: ${formatCents(share.totalCents)}`);
+    for (const item of share.items) {
+      const splitCount = getItemSplitCount(item.itemId);
+      const splitNote = splitCount > 1 ? ` (split ${splitCount} ways)` : "";
+      lines.push(`  - ${item.itemName}${splitNote}: ${formatCents(item.shareCents)}`);
+    }
+    if (share.taxCents > 0) {
+      lines.push(`  Tax: ${formatCents(share.taxCents)}`);
+    }
+    if (share.tipCents > 0) {
+      lines.push(`  Tip: ${formatCents(share.tipCents)}`);
+    }
+    lines.push("");
+  }
+
+  lines.push(`Total: ${formatCents(result.totalCents)}`);
+  return lines.join("\n");
+}
+
+/**
  * Render the Individual Shares section showing each person's calculated total.
  */
 function renderSharesSection(): HTMLElement {
@@ -727,8 +798,13 @@ function renderSharesSection(): HTMLElement {
   sharesList.className = "shares-list";
 
   for (const share of result.shares) {
-    const shareRow = document.createElement("div");
-    shareRow.className = "share-row";
+    // Create expandable details element
+    const details = document.createElement("details");
+    details.className = "share-details";
+
+    // Summary shows name and total
+    const summary = document.createElement("summary");
+    summary.className = "share-row";
 
     const nameSpan = document.createElement("span");
     nameSpan.className = "share-name";
@@ -738,9 +814,55 @@ function renderSharesSection(): HTMLElement {
     amountSpan.className = "share-amount";
     amountSpan.textContent = formatCents(share.totalCents);
 
-    shareRow.appendChild(nameSpan);
-    shareRow.appendChild(amountSpan);
-    sharesList.appendChild(shareRow);
+    summary.appendChild(nameSpan);
+    summary.appendChild(amountSpan);
+    details.appendChild(summary);
+
+    // Breakdown content (shown when expanded)
+    const breakdown = document.createElement("div");
+    breakdown.className = "share-breakdown";
+
+    // List of items
+    for (const item of share.items) {
+      const itemRow = document.createElement("div");
+      itemRow.className = "breakdown-item";
+
+      const splitCount = getItemSplitCount(item.itemId);
+      const itemLabel = document.createElement("span");
+      itemLabel.textContent =
+        splitCount > 1 ? `${item.itemName} (split ${splitCount} ways)` : item.itemName;
+
+      const itemAmount = document.createElement("span");
+      itemAmount.textContent = formatCents(item.shareCents);
+
+      itemRow.appendChild(itemLabel);
+      itemRow.appendChild(itemAmount);
+      breakdown.appendChild(itemRow);
+    }
+
+    // Tax/tip totals
+    const totalsDiv = document.createElement("div");
+    totalsDiv.className = "breakdown-totals";
+
+    const subtotalRow = document.createElement("div");
+    subtotalRow.textContent = `Subtotal: ${formatCents(share.subtotalCents)}`;
+    totalsDiv.appendChild(subtotalRow);
+
+    if (share.taxCents > 0) {
+      const taxRow = document.createElement("div");
+      taxRow.textContent = `Tax: ${formatCents(share.taxCents)}`;
+      totalsDiv.appendChild(taxRow);
+    }
+
+    if (share.tipCents > 0) {
+      const tipRow = document.createElement("div");
+      tipRow.textContent = `Tip: ${formatCents(share.tipCents)}`;
+      totalsDiv.appendChild(tipRow);
+    }
+
+    breakdown.appendChild(totalsDiv);
+    details.appendChild(breakdown);
+    sharesList.appendChild(details);
   }
 
   section.appendChild(sharesList);
@@ -750,6 +872,40 @@ function renderSharesSection(): HTMLElement {
   totalRow.className = "shares-total";
   totalRow.innerHTML = `<span>Total:</span> <span>${formatCents(result.totalCents)}</span>`;
   section.appendChild(totalRow);
+
+  // Copy Summary button
+  const copyContainer = document.createElement("div");
+  copyContainer.className = "copy-container";
+
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "copy-btn";
+  copyBtn.textContent = "Copy Summary";
+
+  // Screen reader live region for copy status
+  const copyFeedback = document.createElement("span");
+  copyFeedback.className = "copy-feedback";
+  copyFeedback.setAttribute("aria-live", "polite");
+  copyFeedback.setAttribute("role", "status");
+
+  copyBtn.addEventListener("click", () => {
+    const summary = generateSummary();
+    navigator.clipboard.writeText(summary).then(() => {
+      copyBtn.textContent = "Copied!";
+      copyBtn.classList.add("copy-success");
+      copyFeedback.textContent = "Summary copied to clipboard";
+
+      setTimeout(() => {
+        copyBtn.textContent = "Copy Summary";
+        copyBtn.classList.remove("copy-success");
+        copyFeedback.textContent = "";
+      }, 2000);
+    });
+  });
+
+  copyContainer.appendChild(copyBtn);
+  copyContainer.appendChild(copyFeedback);
+  section.appendChild(copyContainer);
 
   return section;
 }

@@ -389,6 +389,111 @@
       color: #333;
     }
 
+    /* Expandable share details */
+    .share-details {
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .share-details summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .share-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .share-details summary::before {
+      content: "\25B6";
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 10px;
+      transition: transform 0.2s;
+      color: #999;
+    }
+
+    .share-details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .share-details summary:focus {
+      outline: 2px solid #4a90d9;
+      outline-offset: 2px;
+    }
+
+    .share-breakdown {
+      padding: 8px 12px 12px 28px;
+      background: #f8f9fa;
+      border-top: 1px solid #eee;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .breakdown-totals {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed #ddd;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .breakdown-totals div {
+      padding: 2px 0;
+    }
+
+    /* Copy Summary button */
+    .copy-container {
+      margin-top: 16px;
+    }
+
+    .copy-btn {
+      padding: 8px 16px;
+      background: #4a90d9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.15s;
+    }
+
+    .copy-btn:hover {
+      background: #3a7fc8;
+    }
+
+    .copy-btn:focus {
+      outline: 2px solid #4a90d9;
+      outline-offset: 2px;
+    }
+
+    .copy-success {
+      background: #22c55e;
+    }
+
+    .copy-success:hover {
+      background: #16a34a;
+    }
+
+    .copy-feedback {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     /* Mobile: stack totals inputs */
     @media (max-width: 500px) {
       .totals-display {
