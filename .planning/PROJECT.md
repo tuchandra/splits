@@ -42,14 +42,15 @@ Quickly and accurately split a restaurant bill so everyone pays their fair share
 - ~10 regular friends in the group, occasional additions
 - Common patterns: items eaten by 1 person, split by 2, or shared by entire table
 - OCR receipt upload is desired for v2, not v1
-- **Shipped v1.0:** 1,219 LOC TypeScript, 26 tests passing
+- **Shipped v1.0:** 1,219 LOC vanilla TypeScript, 26 tests passing
+- **Migrated to React (v1.1):** ~370 LOC React + Tailwind, same calculation logic preserved
 
 ## Constraints
 
-- **Deployment**: Static site at tusharc.dev/split (GitHub deployments)
-- **Stack**: TypeScript + Bun only (no npm, no plain JavaScript)
-- **Architecture**: Core split logic as pure functions with unit tests
-- **UX**: Mobile-first, but with keyboard shortcuts for desktop efficiency
+- **Deployment**: Static site at tusharc.dev/split (GitHub Pages)
+- **Stack**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Architecture**: Core split logic as pure functions with unit tests (calculate.ts)
+- **UX**: Mobile-first with Tailwind responsive utilities
 
 ## Key Decisions
 
@@ -63,6 +64,7 @@ Quickly and accurately split a restaurant bill so everyone pays their fair share
 | Largest remainder method | Fair distribution of remainder pennies | ✓ Good |
 | Full re-render pattern | Simple architecture, fast enough for this scale | ✓ Good |
 | Deferred render in change handlers | Allows Tab navigation to complete before DOM rebuild | ✓ Good |
+| React + Tailwind migration | Vanilla DOM was verbose (970 LOC), state/focus issues; React handles declaratively (370 LOC) | — Pending |
 
 ---
-*Last updated: 2026-01-18 after v1.0 milestone*
+*Last updated: 2026-01-19 after React migration*
