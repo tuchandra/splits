@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Plus, Trash2, Copy, ChevronDown } from 'lucide-react'
+import { Plus, Trash2, Copy } from 'lucide-react'
 import { calculateBill, type BillInput } from './lib/calculate'
 
 const STORAGE_KEY = 'splits-data'
@@ -76,7 +76,7 @@ export default function App() {
   const [tipCents, setTipCents] = useState(0)
   const [totalCents, setTotalCents] = useState<number | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [expandedShares, setExpandedShares] = useState<Set<string>>(new Set())
+  const [showBreakdowns, setShowBreakdowns] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState(false)
   const nextDinerRef = useRef<HTMLInputElement>(null)
 
@@ -215,16 +215,6 @@ export default function App() {
   const subtotalCents = dishes.reduce((sum, dish) => sum + getDishTotalCents(dish), 0)
   const calculatedTotalCents = subtotalCents + taxCents + tipCents
   const hasMismatch = totalCents !== null && totalCents !== calculatedTotalCents
-
-  const toggleExpanded = (personId: string) => {
-    const newExpanded = new Set(expandedShares)
-    if (newExpanded.has(personId)) {
-      newExpanded.delete(personId)
-    } else {
-      newExpanded.add(personId)
-    }
-    setExpandedShares(newExpanded)
-  }
 
   const generateSummary = (): string => {
     if (!result) return 'No bill to summarize'
@@ -496,62 +486,92 @@ export default function App() {
 
         {/* Individual Shares Section */}
         <section className="bg-white p-4 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold mb-3">Individual Shares</h2>
+          <div className="flex justify-between items-center mb-3">
+            <h2 className="text-lg font-semibold">Individual Shares</h2>
+            {result && (
+              <button
+                onClick={() => setShowBreakdowns(!showBreakdowns)}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                {showBreakdowns ? 'Hide Details' : 'Show Details'}
+              </button>
+            )}
+          </div>
           {!result ? (
             <p className="text-gray-400 italic">
               {namedDiners.length === 0 ? 'Add diners to see shares' : 'Add dishes to see shares'}
             </p>
           ) : (
             <>
-              <div className="space-y-2">
-                {result.shares.map((share) => {
-                  const isExpanded = expandedShares.has(share.personId)
-                  return (
-                    <div key={share.personId} className="rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => toggleExpanded(share.personId)}
-                        className="w-full flex justify-between items-center p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
-                      >
-                        <span className="flex items-center gap-2">
-                          <ChevronDown
-                            size={16}
-                            className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-                          />
-                          <span className="font-medium">{share.personId}</span>
-                        </span>
-                        <span className="font-semibold text-blue-600">
-                          {formatCents(share.totalCents)}
-                        </span>
-                      </button>
-                      {isExpanded && (
-                        <div className="bg-gray-50 px-3 pb-3 pt-1 border-t border-gray-100">
-                          <div className="pl-6 space-y-1">
-                            {share.items.map((item) => {
-                              const dish = dishes.find(d => d.id === item.itemId)
-                              const splitCount = dish?.diners.filter(idx => diners[idx]?.trim()).length ?? 1
-                              return (
-                                <div key={item.itemId} className="flex justify-between text-sm text-gray-600">
-                                  <span>
-                                    {item.itemName}
-                                    {splitCount > 1 && <span className="text-gray-400"> (split {splitCount} ways)</span>}
-                                  </span>
-                                  <span>{formatCents(item.shareCents)}</span>
-                                </div>
-                              )
-                            })}
-                            <div className="pt-2 mt-2 border-t border-dashed border-gray-200 space-y-1 text-sm text-gray-500">
-                              <div>Subtotal: {formatCents(share.subtotalCents)}</div>
-                              {share.taxCents > 0 && <div>Tax: {formatCents(share.taxCents)}</div>}
-                              {share.tipCents > 0 && <div>Tip: {formatCents(share.tipCents)}</div>}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })}
+              {/* Summary Table */}
+              <div className="border rounded-lg mb-4 overflow-hidden">
+                {result.shares.map((share, index) => (
+                  <div
+                    key={share.personId}
+                    className={`flex justify-between items-center p-3 ${
+                      index !== result.shares.length - 1 ? 'border-b' : ''
+                    }`}
+                  >
+                    <span className="font-medium">{share.personId}</span>
+                    <span className="font-semibold text-blue-600">
+                      {formatCents(share.totalCents)}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="flex justify-between items-center mt-4 pt-3 border-t font-semibold">
+
+              {/* Detailed Breakdowns */}
+              {showBreakdowns && (
+                <div className="space-y-3 mb-4">
+                  <h3 className="font-semibold text-gray-700">Detailed Breakdowns</h3>
+                  {result.shares.map((share) => (
+                    <div key={share.personId} className="border rounded-lg p-3 bg-gray-50">
+                      <div className="flex justify-between font-semibold text-lg mb-2">
+                        <span>{share.personId}</span>
+                        <span>{formatCents(share.totalCents)}</span>
+                      </div>
+                      <div className="text-sm text-gray-600 space-y-1 pl-4">
+                        {share.items.map((item) => {
+                          const dish = dishes.find(d => d.id === item.itemId)
+                          const dishTotal = dish ? getDishTotalCents(dish) : item.shareCents
+                          const splitCount = dish?.diners.filter(idx => diners[idx]?.trim()).length ?? 1
+                          return (
+                            <div key={item.itemId} className="flex justify-between">
+                              <span>
+                                {item.itemName}
+                                {splitCount > 1 && (
+                                  <span className="text-gray-400 text-xs ml-1">
+                                    ({formatCents(dishTotal)} ÷ {splitCount})
+                                  </span>
+                                )}
+                              </span>
+                              <span>{formatCents(item.shareCents)}</span>
+                            </div>
+                          )
+                        })}
+                        <div className="flex justify-between border-t pt-1">
+                          <span>Food Subtotal</span>
+                          <span>{formatCents(share.subtotalCents)}</span>
+                        </div>
+                        {share.taxCents > 0 && (
+                          <div className="flex justify-between">
+                            <span>Tax Share</span>
+                            <span>{formatCents(share.taxCents)}</span>
+                          </div>
+                        )}
+                        {share.tipCents > 0 && (
+                          <div className="flex justify-between">
+                            <span>Tip Share</span>
+                            <span>{formatCents(share.tipCents)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-between items-center pt-3 border-t font-semibold">
                 <span>Total:</span>
                 <span>{formatCents(result.totalCents)}</span>
               </div>
