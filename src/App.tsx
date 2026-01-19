@@ -283,6 +283,9 @@ export default function App() {
                       type="number"
                       value={dish.quantity}
                       onChange={(e) => updateDish(dishIndex, 'quantity', parseInt(e.target.value) || 1)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                      }}
                       placeholder="Qty"
                       className="border rounded px-3 py-2 w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                       min="1"
@@ -293,6 +296,9 @@ export default function App() {
                         type="number"
                         value={dish.priceCents > 0 ? (dish.priceCents / 100).toFixed(2) : ''}
                         onChange={(e) => updateDish(dishIndex, 'priceCents', parseDollars(e.target.value))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                        }}
                         placeholder="0.00"
                         className="border rounded px-3 py-2 pl-7 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                         step="0.01"
@@ -368,6 +374,9 @@ export default function App() {
                 type="number"
                 value={taxCents > 0 ? (taxCents / 100).toFixed(2) : ''}
                 onChange={(e) => setTaxCents(parseDollars(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                }}
                 placeholder="0.00"
                 className="border rounded px-3 py-2 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                 step="0.01"
@@ -379,6 +388,9 @@ export default function App() {
                 type="number"
                 value={tipCents > 0 ? (tipCents / 100).toFixed(2) : ''}
                 onChange={(e) => setTipCents(parseDollars(e.target.value))}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                }}
                 placeholder="0.00"
                 className="border rounded px-3 py-2 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
                 step="0.01"
@@ -392,6 +404,9 @@ export default function App() {
                 onChange={(e) => {
                   const val = e.target.value
                   setTotalCents(val === '' ? null : parseDollars(val))
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                 }}
                 placeholder="0.00"
                 className={`border rounded px-3 py-2 w-28 text-right focus:outline-none focus:ring-2 ${
