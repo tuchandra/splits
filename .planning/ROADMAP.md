@@ -11,7 +11,7 @@ Build a bill splitter that takes manual line item entry, assigns items to friend
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Foundation** - Project setup and core split calculation logic with tests
-- [ ] **Phase 2: Core UI** - Friends management, item entry, and assignment interface
+- [x] **Phase 2: Core UI** - Friends management, item entry, and assignment interface
 - [ ] **Phase 3: Polish** - Output display, export, and keyboard shortcuts
 
 ## Phase Details
@@ -49,9 +49,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md - State management, localStorage, and diner entry UI
-- [ ] 02-02-PLAN.md - Dish entry with qty/price and bill totals validation
-- [ ] 02-03-PLAN.md - Assignment chips, unassigned warnings, live Individual Shares
+- [x] 02-01-PLAN.md - State management, localStorage, and diner entry UI
+- [x] 02-02-PLAN.md - Dish entry with qty/price and bill totals validation
+- [x] 02-03-PLAN.md - Assignment chips, unassigned warnings, live Individual Shares
 
 ### Phase 3: Polish
 **Goal**: Users can see final results and efficiently use keyboard shortcuts
@@ -75,7 +75,7 @@ Phases execute in numeric order: 1 -> 2 -> 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-18 |
-| 2. Core UI | 0/3 | Not started | - |
+| 2. Core UI | 3/3 | Complete | 2026-01-18 |
 | 3. Polish | 0/2 | Not started | - |
 
 ---

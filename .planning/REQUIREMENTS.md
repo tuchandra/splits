@@ -7,17 +7,17 @@
 
 ### Entry
 
-- [ ] **ENTRY-01**: User can add line items with name and amount
-- [ ] **ENTRY-02**: User can edit existing line items
-- [ ] **ENTRY-03**: User can delete line items
-- [ ] **ENTRY-04**: User can enter tax, tip, and fees as separate amounts
+- [x] **ENTRY-01**: User can add line items with name and amount
+- [x] **ENTRY-02**: User can edit existing line items
+- [x] **ENTRY-03**: User can delete line items
+- [x] **ENTRY-04**: User can enter tax, tip, and fees as separate amounts
 
 ### Assignment
 
-- [ ] **ASSIGN-01**: User can assign each item to one or more people
-- [ ] **ASSIGN-02**: User can assign item to "everyone" with one action
-- [ ] **ASSIGN-03**: User can see which items are unassigned
-- [ ] **ASSIGN-04**: User can see running total vs expected total (sanity check)
+- [x] **ASSIGN-01**: User can assign each item to one or more people
+- [x] **ASSIGN-02**: User can assign item to "everyone" with one action
+- [x] **ASSIGN-03**: User can see which items are unassigned
+- [x] **ASSIGN-04**: User can see running total vs expected total (sanity check)
 
 ### Calculation
 
@@ -32,13 +32,13 @@
 
 ### Friends
 
-- [ ] **FRIEND-01**: Preset list of friends stored in localStorage
-- [ ] **FRIEND-02**: User can add new friends on the fly
-- [ ] **FRIEND-03**: User can select friends participating in this bill
+- [x] **FRIEND-01**: Preset list of friends stored in localStorage
+- [x] **FRIEND-02**: User can add new friends on the fly
+- [x] **FRIEND-03**: User can select friends participating in this bill
 
 ### UX
 
-- [ ] **UX-01**: Mobile-friendly responsive design
+- [x] **UX-01**: Mobile-friendly responsive design
 - [ ] **UX-02**: Keyboard shortcuts for common actions on desktop
 
 ## v2 Requirements
@@ -61,23 +61,23 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENTRY-01 | Phase 2 | Pending |
-| ENTRY-02 | Phase 2 | Pending |
-| ENTRY-03 | Phase 2 | Pending |
-| ENTRY-04 | Phase 2 | Pending |
-| ASSIGN-01 | Phase 2 | Pending |
-| ASSIGN-02 | Phase 2 | Pending |
-| ASSIGN-03 | Phase 2 | Pending |
-| ASSIGN-04 | Phase 2 | Pending |
+| ENTRY-01 | Phase 2 | Complete |
+| ENTRY-02 | Phase 2 | Complete |
+| ENTRY-03 | Phase 2 | Complete |
+| ENTRY-04 | Phase 2 | Complete |
+| ASSIGN-01 | Phase 2 | Complete |
+| ASSIGN-02 | Phase 2 | Complete |
+| ASSIGN-03 | Phase 2 | Complete |
+| ASSIGN-04 | Phase 2 | Complete |
 | CALC-01 | Phase 1 | Complete |
 | CALC-02 | Phase 1 | Complete |
 | CALC-03 | Phase 1 | Complete |
 | OUT-01 | Phase 3 | Pending |
 | OUT-02 | Phase 3 | Pending |
-| FRIEND-01 | Phase 2 | Pending |
-| FRIEND-02 | Phase 2 | Pending |
-| FRIEND-03 | Phase 2 | Pending |
-| UX-01 | Phase 2 | Pending |
+| FRIEND-01 | Phase 2 | Complete |
+| FRIEND-02 | Phase 2 | Complete |
+| FRIEND-03 | Phase 2 | Complete |
+| UX-01 | Phase 2 | Complete |
 | UX-02 | Phase 3 | Pending |
 
 **Coverage:**
@@ -87,4 +87,4 @@
 
 ---
 *Requirements defined: 2025-01-18*
-*Last updated: 2026-01-18 after Phase 1 completion*
+*Last updated: 2026-01-18 after Phase 2 completion*
