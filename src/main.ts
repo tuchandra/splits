@@ -131,8 +131,20 @@ function renderDinersSection(): HTMLElement {
     deleteBtn.addEventListener("click", (e) => {
       const target = e.target as HTMLButtonElement;
       const idx = Number(target.dataset.index);
+      const deletedDiner = state.diners[idx];
       state.diners.splice(idx, 1);
       saveDiners(state.diners);
+
+      // Clean up assignedTo arrays - remove deleted diner from all dishes
+      if (deletedDiner) {
+        for (const dish of state.dishes) {
+          const assignedIdx = dish.assignedTo.indexOf(deletedDiner);
+          if (assignedIdx >= 0) {
+            dish.assignedTo.splice(assignedIdx, 1);
+          }
+        }
+      }
+
       render();
     });
 
@@ -287,12 +299,86 @@ function renderDishesSection(): HTMLElement {
       render();
     });
 
+    // Assignment chips container
+    const chipsContainer = document.createElement("div");
+    chipsContainer.className = "assignment-chips";
+
+    const namedDiners = getNamedDiners();
+    if (namedDiners.length > 0) {
+      // "All" toggle button
+      const allBtn = document.createElement("button");
+      allBtn.type = "button";
+      const allAssigned = namedDiners.every((d) => dish.assignedTo.includes(d));
+      allBtn.className = allAssigned ? "chip chip-all chip-assigned" : "chip chip-all";
+      allBtn.textContent = "All";
+      allBtn.dataset.index = String(index);
+
+      allBtn.addEventListener("click", (e) => {
+        const idx = Number((e.target as HTMLButtonElement).dataset.index);
+        const currentDish = state.dishes[idx]!;
+        const allDiners = getNamedDiners();
+        const currentlyAllAssigned = allDiners.every((d) => currentDish.assignedTo.includes(d));
+
+        if (currentlyAllAssigned) {
+          // Unassign everyone
+          currentDish.assignedTo = [];
+        } else {
+          // Assign everyone
+          currentDish.assignedTo = [...allDiners];
+        }
+        render();
+      });
+
+      chipsContainer.appendChild(allBtn);
+
+      // Individual diner chips
+      for (const dinerName of namedDiners) {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        const isAssigned = dish.assignedTo.includes(dinerName);
+        chip.className = isAssigned ? "chip chip-assigned" : "chip";
+        chip.textContent = dinerName;
+        chip.dataset.index = String(index);
+        chip.dataset.diner = dinerName;
+
+        chip.addEventListener("click", (e) => {
+          const target = e.target as HTMLButtonElement;
+          const idx = Number(target.dataset.index);
+          const diner = target.dataset.diner!;
+          const currentDish = state.dishes[idx]!;
+
+          const dinerIndex = currentDish.assignedTo.indexOf(diner);
+          if (dinerIndex >= 0) {
+            // Remove assignment
+            currentDish.assignedTo.splice(dinerIndex, 1);
+          } else {
+            // Add assignment
+            currentDish.assignedTo.push(diner);
+          }
+          render();
+        });
+
+        chipsContainer.appendChild(chip);
+      }
+    } else if (state.dishes.length > 0 && state.diners.length === 0) {
+      // Hint when no diners
+      const hint = document.createElement("span");
+      hint.className = "chips-hint";
+      hint.textContent = "Add diners above";
+      chipsContainer.appendChild(hint);
+    }
+
     // Assemble dish card
-    dishCard.appendChild(nameInput);
-    dishCard.appendChild(qtyInput);
-    dishCard.appendChild(priceInput);
-    dishCard.appendChild(lineTotal);
-    dishCard.appendChild(deleteBtn);
+    const dishInputsRow = document.createElement("div");
+    dishInputsRow.className = "dish-inputs-row";
+    dishInputsRow.appendChild(nameInput);
+    dishInputsRow.appendChild(qtyInput);
+    dishInputsRow.appendChild(priceInput);
+    dishInputsRow.appendChild(lineTotal);
+    dishInputsRow.appendChild(deleteBtn);
+
+    dishCard.appendChild(dishInputsRow);
+    dishCard.appendChild(chipsContainer);
     dishList.appendChild(dishCard);
   });
 

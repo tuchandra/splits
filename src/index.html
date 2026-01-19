@@ -110,12 +110,58 @@
 
     .dish-card {
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
       padding: 8px;
       background: #fafafa;
       border: 1px solid #eee;
       border-radius: 6px;
+    }
+
+    .dish-inputs-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .assignment-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border: 1px solid #4a90d9;
+      background: transparent;
+      color: #4a90d9;
+      cursor: pointer;
+      font-size: 12px;
+      border-radius: 16px;
+      transition: background-color 0.15s, color 0.15s;
+    }
+
+    .chip:hover {
+      background: #f0f7ff;
+    }
+
+    .chip-assigned {
+      background: #4a90d9;
+      color: #fff;
+    }
+
+    .chip-assigned:hover {
+      background: #3a7fc8;
+    }
+
+    .chip-all {
+      font-weight: 600;
+    }
+
+    .chips-hint {
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
     }
 
     .dish-name-input {
@@ -164,7 +210,7 @@
 
     /* Mobile: stack dish inputs */
     @media (max-width: 500px) {
-      .dish-card {
+      .dish-inputs-row {
         flex-wrap: wrap;
       }
 
