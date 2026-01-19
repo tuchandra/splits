@@ -1,4 +1,5 @@
 import { loadDiners, saveDiners } from "./lib/storage.ts";
+import { calculateBill, type BillInput } from "./lib/calculate.ts";
 
 // Types
 
@@ -83,6 +84,10 @@ function render(): void {
   // Render Bill Totals section
   const billTotalsSection = renderBillTotalsSection();
   app.appendChild(billTotalsSection);
+
+  // Render Individual Shares section
+  const sharesSection = renderSharesSection();
+  app.appendChild(sharesSection);
 }
 
 /**
@@ -199,7 +204,11 @@ function renderDishesSection(): HTMLElement {
   // Render each dish
   state.dishes.forEach((dish, index) => {
     const dishCard = document.createElement("div");
-    dishCard.className = "dish-card";
+    // Check if dish is unassigned (no named diners assigned)
+    const namedDinersForDish = getNamedDiners();
+    const hasAssignment = dish.assignedTo.some((d) => namedDinersForDish.includes(d));
+    const isUnassigned = !hasAssignment && dish.name.trim() !== "";
+    dishCard.className = isUnassigned ? "dish-card dish-unassigned" : "dish-card";
 
     // Name input
     const nameInput = document.createElement("input");
@@ -366,6 +375,14 @@ function renderDishesSection(): HTMLElement {
       hint.className = "chips-hint";
       hint.textContent = "Add diners above";
       chipsContainer.appendChild(hint);
+    }
+
+    // Add "Unassigned" label if dish has name but no valid assignments
+    if (isUnassigned && namedDiners.length > 0) {
+      const unassignedLabel = document.createElement("span");
+      unassignedLabel.className = "unassigned-label";
+      unassignedLabel.textContent = "Unassigned";
+      chipsContainer.appendChild(unassignedLabel);
     }
 
     // Assemble dish card
@@ -537,6 +554,86 @@ function renderBillTotalsSection(): HTMLElement {
   inputRow.appendChild(totalGroup);
 
   section.appendChild(inputRow);
+
+  return section;
+}
+
+/**
+ * Render the Individual Shares section showing each person's calculated total.
+ */
+function renderSharesSection(): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "shares-section";
+
+  // Header
+  const header = document.createElement("h2");
+  header.textContent = "Individual Shares";
+  section.appendChild(header);
+
+  const namedDiners = getNamedDiners();
+  const namedDishes = state.dishes.filter((d) => d.name.trim() !== "");
+
+  // Empty state handling
+  if (namedDiners.length === 0) {
+    const emptyMsg = document.createElement("div");
+    emptyMsg.className = "shares-empty";
+    emptyMsg.textContent = "Add diners to see shares";
+    section.appendChild(emptyMsg);
+    return section;
+  }
+
+  if (namedDishes.length === 0) {
+    const emptyMsg = document.createElement("div");
+    emptyMsg.className = "shares-empty";
+    emptyMsg.textContent = "Add dishes to see shares";
+    section.appendChild(emptyMsg);
+    return section;
+  }
+
+  // Build BillInput from current state
+  const billInput: BillInput = {
+    items: namedDishes.map((d) => ({
+      id: d.id,
+      name: d.name,
+      amountCents: d.quantity * d.unitPriceCents,
+      assignedTo: d.assignedTo.filter((name) => namedDiners.includes(name)),
+    })),
+    taxCents: state.taxCents,
+    tipCents: state.tipCents,
+    feesCents: 0, // Not using fees in this app per CONTEXT.md
+    participants: namedDiners,
+  };
+
+  const result = calculateBill(billInput);
+
+  // Shares list
+  const sharesList = document.createElement("div");
+  sharesList.className = "shares-list";
+
+  for (const share of result.shares) {
+    const shareRow = document.createElement("div");
+    shareRow.className = "share-row";
+
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "share-name";
+    nameSpan.textContent = share.personId;
+
+    const amountSpan = document.createElement("span");
+    amountSpan.className = "share-amount";
+    amountSpan.textContent = formatCents(share.totalCents);
+
+    shareRow.appendChild(nameSpan);
+    shareRow.appendChild(amountSpan);
+    sharesList.appendChild(shareRow);
+  }
+
+  section.appendChild(sharesList);
+
+  // Total row (sum of all shares)
+  const totalRow = document.createElement("div");
+  totalRow.className = "shares-total";
+  totalRow.innerHTML = `<span>Total:</span> <span>${formatCents(result.totalCents)}</span>`;
+  section.appendChild(totalRow);
 
   return section;
 }

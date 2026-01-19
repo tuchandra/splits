@@ -164,6 +164,20 @@
       font-style: italic;
     }
 
+    /* Unassigned dish warning */
+    .dish-unassigned {
+      border-color: #d97706;
+      border-width: 2px;
+      background: #fffbeb;
+    }
+
+    .unassigned-label {
+      font-size: 12px;
+      color: #d97706;
+      font-weight: 500;
+      margin-left: auto;
+    }
+
     .dish-name-input {
       flex: 1;
       min-width: 120px;
@@ -310,6 +324,60 @@
       color: #d97706;
       font-weight: 500;
       margin-top: 2px;
+    }
+
+    /* Individual Shares section */
+    .shares-section {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 16px;
+    }
+
+    .shares-empty {
+      font-size: 14px;
+      color: #999;
+      font-style: italic;
+      padding: 12px 0;
+    }
+
+    .shares-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .share-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .share-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .share-amount {
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a90d9;
+    }
+
+    .shares-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin-top: 8px;
+      border-top: 1px solid #eee;
+      font-weight: 600;
+      color: #333;
     }
 
     /* Mobile: stack totals inputs */
