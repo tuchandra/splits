@@ -197,10 +197,11 @@ function renderDinersSection(): HTMLElement {
       }
     });
 
-    // Delete button
+    // Delete button (tabindex=-1 to skip in tab order)
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
     deleteBtn.textContent = "X";
+    deleteBtn.tabIndex = -1;
     deleteBtn.dataset.index = String(index);
 
     deleteBtn.addEventListener("click", (e) => {
@@ -238,6 +239,10 @@ function renderDinersSection(): HTMLElement {
 
   section.appendChild(dinerList);
 
+  // Button row
+  const buttonRow = document.createElement("div");
+  buttonRow.className = "diner-buttons";
+
   // Add Diner button
   const addBtn = document.createElement("button");
   addBtn.className = "add-btn";
@@ -258,7 +263,28 @@ function renderDinersSection(): HTMLElement {
     }, 0);
   });
 
-  section.appendChild(addBtn);
+  buttonRow.appendChild(addBtn);
+
+  // Clear All button (only show if there are diners)
+  if (state.diners.length > 0) {
+    const clearBtn = document.createElement("button");
+    clearBtn.className = "clear-btn";
+    clearBtn.textContent = "Clear All";
+
+    clearBtn.addEventListener("click", () => {
+      // Clear all diners and their assignments from dishes
+      for (const dish of state.dishes) {
+        dish.assignedTo = [];
+      }
+      state.diners = [];
+      saveDiners(state.diners);
+      render();
+    });
+
+    buttonRow.appendChild(clearBtn);
+  }
+
+  section.appendChild(buttonRow);
 
   return section;
 }
@@ -403,16 +429,40 @@ function renderDishesSection(): HTMLElement {
     lineTotal.className = "dish-line-total";
     lineTotal.textContent = formatCents(getDishTotalCents(dish));
 
-    // Delete button
+    // Delete button (tabindex=-1 to skip in tab order)
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-btn";
     deleteBtn.textContent = "X";
+    deleteBtn.tabIndex = -1;
     deleteBtn.dataset.index = String(index);
 
     deleteBtn.addEventListener("click", (e) => {
       const target = e.target as HTMLButtonElement;
       const idx = Number(target.dataset.index);
       state.dishes.splice(idx, 1);
+      render();
+    });
+
+    // Duplicate button (tabindex=-1 to skip in tab order)
+    const dupBtn = document.createElement("button");
+    dupBtn.className = "dup-btn";
+    dupBtn.textContent = "⧉";
+    dupBtn.title = "Duplicate dish";
+    dupBtn.tabIndex = -1;
+    dupBtn.dataset.index = String(index);
+
+    dupBtn.addEventListener("click", (e) => {
+      const target = e.target as HTMLButtonElement;
+      const idx = Number(target.dataset.index);
+      const original = state.dishes[idx]!;
+      // Insert duplicate right after original
+      state.dishes.splice(idx + 1, 0, {
+        id: crypto.randomUUID(),
+        name: original.name,
+        quantity: original.quantity,
+        unitPriceCents: original.unitPriceCents,
+        assignedTo: [...original.assignedTo],
+      });
       render();
     });
 
@@ -500,6 +550,7 @@ function renderDishesSection(): HTMLElement {
     dishInputsRow.appendChild(qtyInput);
     dishInputsRow.appendChild(priceInput);
     dishInputsRow.appendChild(lineTotal);
+    dishInputsRow.appendChild(dupBtn);
     dishInputsRow.appendChild(deleteBtn);
 
     dishCard.appendChild(dishInputsRow);
@@ -589,12 +640,11 @@ function renderBillTotalsSection(): HTMLElement {
   const taxLabel = document.createElement("label");
   taxLabel.textContent = "Tax";
   const taxInput = document.createElement("input");
-  taxInput.type = "number";
+  taxInput.type = "text";
+  taxInput.inputMode = "decimal";
   taxInput.className = "totals-input";
   taxInput.value = state.taxCents > 0 ? (state.taxCents / 100).toFixed(2) : "";
   taxInput.placeholder = "0.00";
-  taxInput.step = "0.01";
-  taxInput.min = "0";
   taxInput.addEventListener("change", (e) => {
     const val = parseFloat((e.target as HTMLInputElement).value);
     state.taxCents = isNaN(val) ? 0 : Math.round(val * 100);
@@ -610,12 +660,11 @@ function renderBillTotalsSection(): HTMLElement {
   const tipLabel = document.createElement("label");
   tipLabel.textContent = "Tip";
   const tipInput = document.createElement("input");
-  tipInput.type = "number";
+  tipInput.type = "text";
+  tipInput.inputMode = "decimal";
   tipInput.className = "totals-input";
   tipInput.value = state.tipCents > 0 ? (state.tipCents / 100).toFixed(2) : "";
   tipInput.placeholder = "0.00";
-  tipInput.step = "0.01";
-  tipInput.min = "0";
   tipInput.addEventListener("change", (e) => {
     const val = parseFloat((e.target as HTMLInputElement).value);
     state.tipCents = isNaN(val) ? 0 : Math.round(val * 100);
@@ -631,12 +680,11 @@ function renderBillTotalsSection(): HTMLElement {
   const totalLabel = document.createElement("label");
   totalLabel.textContent = "Total (from receipt)";
   const totalInput = document.createElement("input");
-  totalInput.type = "number";
+  totalInput.type = "text";
+  totalInput.inputMode = "decimal";
   totalInput.className = "totals-input";
   totalInput.value = state.enteredTotalCents !== null ? (state.enteredTotalCents / 100).toFixed(2) : "";
   totalInput.placeholder = "0.00";
-  totalInput.step = "0.01";
-  totalInput.min = "0";
 
   // Check for mismatch
   const hasMismatch = state.enteredTotalCents !== null && state.enteredTotalCents !== calculatedTotalCents;
