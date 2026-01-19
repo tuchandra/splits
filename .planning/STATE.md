@@ -9,31 +9,31 @@ See: .planning/PROJECT.md (updated 2025-01-18)
 
 ## Current Position
 
-Phase: 1 of 3 (Foundation) - COMPLETE
-Plan: 2 of 2 in current phase
-Status: Phase complete - ready for Phase 2
-Last activity: 2026-01-19 - Completed 01-02-PLAN.md (Bill Calculation Engine)
+Phase: 2 of 3 (Core UI)
+Plan: 1 of 3 in current phase
+Status: In progress
+Last activity: 2026-01-18 - Completed 02-01-PLAN.md (App State and Diner Entry)
 
-Progress: [██░░░░░░░░] 29% (2/7 plans)
+Progress: [███░░░░░░░] 43% (3/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 2.5 min
-- Total execution time: 5 min
+- Total plans completed: 3
+- Average duration: 3 min
+- Total execution time: 9 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1. Foundation | 2/2 | 5 min | 2.5 min |
-| 2. Core UI | 0/3 | - | - |
+| 2. Core UI | 1/3 | 4 min | 4 min |
 | 3. Polish | 0/2 | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (2 min), 01-02 (3 min)
-- Trend: Stable (~2-3 min per plan)
+- Last 5 plans: 01-01 (2 min), 01-02 (3 min), 02-01 (4 min)
+- Trend: Stable (~3 min per plan)
 
 *Updated after each plan completion*
 
@@ -51,6 +51,9 @@ Recent decisions affecting current work:
 - Largest remainder method for proportional allocation
 - Round-robin distribution for even splits with remainders
 - No runtime dependencies for logic (inline all utils/math)
+- Simple full re-render pattern instead of granular DOM updates
+- localStorage key 'splits-diners' for diner preset persistence
+- Empty diners kept in array, filtered via getNamedDiners for display
 
 ### Pending Todos
 
@@ -62,6 +65,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-01-19
-Stopped at: Completed 01-02-PLAN.md (Bill Calculation Engine)
+Last session: 2026-01-18
+Stopped at: Completed 02-01-PLAN.md (App State and Diner Entry)
 Resume file: None
