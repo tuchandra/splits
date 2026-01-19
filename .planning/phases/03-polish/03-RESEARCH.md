@@ -6,11 +6,18 @@
 
 ## Summary
 
-Phase 3 adds polish features: enhanced output display showing breakdown details, a copy/export summary feature using the Clipboard API, and keyboard shortcuts for desktop power users. These are all well-supported browser features that require minimal complexity.
+Phase 3 adds polish features: enhanced output display showing breakdown details, a copy/export summary feature using the Clipboard API, and keyboard-only data entry flow.
 
-The Individual Shares section already exists with basic totals. Enhancement involves showing item breakdowns (collapsible or expanded) and providing a "Copy Summary" button. The Clipboard API (`navigator.clipboard.writeText()`) is Baseline Widely Available since March 2020 and works in all modern browsers with HTTPS. Keyboard shortcuts use standard `keydown` event handling with modifier key detection.
+The Individual Shares section already exists with basic totals. Enhancement involves showing item breakdowns (collapsible or expanded) and providing a "Copy Summary" button. The Clipboard API (`navigator.clipboard.writeText()`) is Baseline Widely Available since March 2020 and works in all modern browsers with HTTPS.
 
-**Primary recommendation:** Use inline button text change ("Copied!") for clipboard feedback rather than toast notifications. Implement keyboard shortcuts using `keydown` event on `document` with modifier keys (Ctrl/Cmd) to avoid conflicting with browser defaults. Use `?` key (no modifier) for showing help overlay following Gmail/GitHub convention.
+**Keyboard focus (user clarification):** The goal is **keyboard-only data entry** - users should be able to enter all data without touching the mouse. This means:
+- Seamless Tab flow through all inputs (diners → dishes → bill totals)
+- Tab from last dish price auto-creates new dish row (already implemented in Phase 2)
+- Enter key support for confirming/adding entries
+- No Ctrl/Cmd modifier shortcuts needed - just natural tab/enter flow
+- Mouse-only actions (delete buttons) are acceptable
+
+**Primary recommendation:** Use inline button text change ("Copied!") for clipboard feedback rather than toast notifications. Focus on polishing the Tab flow rather than adding complex keyboard shortcuts.
 
 ## Standard Stack
 
@@ -103,78 +110,52 @@ function generateSummary(shares: PersonShare[], dishes: Dish[]): string {
 }
 ```
 
-### Pattern 3: Global Keyboard Shortcut Handler
-**What:** Listen for keyboard shortcuts on document
-**When to use:** App-wide shortcuts that work regardless of focus
-**Example:**
+### Pattern 3: Keyboard-Only Data Entry Flow
+**What:** Natural Tab/Enter flow through form without needing modifier shortcuts
+**When to use:** Forms where users enter data sequentially
+**Key behaviors:**
+- Tab moves forward through all inputs in logical order
+- Shift+Tab moves backward
+- Enter in last field of a section can add new entry or move to next section
+- All interactive elements are focusable and have visible focus states
+
+**Example - Tab order for bill splitter:**
+1. First diner name → Tab → Second diner name → ... → Last diner name
+2. Tab → First dish name → Tab → qty → Tab → price
+3. Tab from price → auto-adds new dish row if current has content, focuses new dish name
+4. After all dishes: Tab → Tax → Tab → Tip → Tab → Total
+5. Final Tab → Copy Summary button (optional)
+
+**Enter key handling:**
 ```typescript
-// Source: WebAIM keyboard accessibility guide
-document.addEventListener("keydown", (e: KeyboardEvent) => {
-  // Ignore if user is typing in an input
-  if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
-    return;
-  }
-
-  // Use metaKey for Mac, ctrlKey for Windows/Linux
-  const modifier = e.metaKey || e.ctrlKey;
-
-  // ? for help (no modifier required - Gmail/GitHub convention)
-  if (e.key === "?" && !modifier) {
+// In diner name input
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
     e.preventDefault();
-    showKeyboardHelp();
-    return;
+    addDiner(); // Add new diner and focus it
   }
+});
 
-  // Ctrl/Cmd+Shift+C for copy summary (avoid conflict with browser copy)
-  if (modifier && e.shiftKey && e.key === "C") {
+// In last dish price input
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
     e.preventDefault();
-    copySummary();
-    return;
-  }
-
-  // Ctrl/Cmd+D for add diner
-  if (modifier && e.key === "d") {
-    e.preventDefault();
-    addDiner();
-    return;
-  }
-
-  // Escape to close help modal
-  if (e.key === "Escape") {
-    closeKeyboardHelp();
-    return;
+    addDish(); // Add new dish and focus its name
   }
 });
 ```
 
-### Pattern 4: Help Modal with Keyboard Shortcut List
-**What:** Modal overlay showing available shortcuts, triggered by `?`
-**When to use:** Apps with multiple keyboard shortcuts
-**Example:**
+**Focus management:**
 ```typescript
-function renderHelpModal(): HTMLElement {
-  const overlay = document.createElement("div");
-  overlay.className = "help-overlay";
-  overlay.setAttribute("role", "dialog");
-  overlay.setAttribute("aria-modal", "true");
-  overlay.setAttribute("aria-label", "Keyboard shortcuts");
-
-  const modal = document.createElement("div");
-  modal.className = "help-modal";
-  modal.innerHTML = `
-    <h2>Keyboard Shortcuts</h2>
-    <table>
-      <tr><td><kbd>?</kbd></td><td>Show this help</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd></td><td>Copy summary</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>Add diner</td></tr>
-      <tr><td><kbd>Ctrl</kbd>+<kbd>I</kbd></td><td>Add dish</td></tr>
-      <tr><td><kbd>Esc</kbd></td><td>Close this help</td></tr>
-    </table>
-    <button class="close-btn">Close</button>
-  `;
-
-  overlay.appendChild(modal);
-  return overlay;
+// After adding new diner, focus the new input
+function addDiner(): void {
+  state.diners.push("");
+  saveDiners(state.diners);
+  render();
+  // Focus the newly added input
+  const inputs = document.querySelectorAll(".diner-input");
+  const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
+  lastInput?.focus();
 }
 ```
 
@@ -255,29 +236,25 @@ button.addEventListener("click", () => {
 });
 ```
 
-### Pitfall 3: Shortcut Conflicts
-**What goes wrong:** Keyboard shortcuts don't work or break browser features
-**Why it happens:** Using shortcuts reserved by browser/OS/assistive tech
+### Pitfall 3: Tab Order Broken by Dynamic Elements
+**What goes wrong:** Tab skips inputs or jumps unexpectedly after adding new row
+**Why it happens:** New elements added at wrong position in DOM, or focus not managed after render
 **How to avoid:**
-- Use `Ctrl+Shift+key` combinations (less likely to conflict)
-- Never override Ctrl+C, Ctrl+V, Ctrl+Z, Ctrl+A
-- Test with screen readers
-- Allow `?` without modifier (Gmail/GitHub convention)
-**Warning signs:** Users report shortcut doesn't work on their system
+- After render, explicitly focus the intended next element
+- Keep DOM structure stable (new rows added at end of container)
+- Test full tab flow after each dynamic addition
+**Warning signs:** Tab jumps to unexpected element after adding diner/dish
 
-### Pitfall 4: Shortcuts Fire in Input Fields
-**What goes wrong:** Typing `d` in an input triggers "add diner"
-**Why it happens:** Not checking if event target is an input element
-**How to avoid:** Check `e.target instanceof HTMLInputElement` before handling
-**Warning signs:** Users can't type certain letters in forms
+### Pitfall 4: Focus Lost After Re-render
+**What goes wrong:** User is typing, re-render happens, focus moves to start of page
+**Why it happens:** Full re-render replaces focused element without restoring focus
+**How to avoid:**
+- Track which element was focused before render
+- After render, restore focus to equivalent element
+- Or: only re-render sections that changed
+**Warning signs:** User loses place when typing triggers state update
 
-### Pitfall 5: Modal Doesn't Trap Focus
-**What goes wrong:** Tab key moves focus behind modal, confusing keyboard users
-**Why it happens:** Modal doesn't implement focus trapping
-**How to avoid:** For simple help modal, just close on Escape and any click outside
-**Warning signs:** Accessibility audit fails on keyboard navigation
-
-### Pitfall 6: Invisible Copied Feedback for Screen Readers
+### Pitfall 5: Invisible Copied Feedback for Screen Readers
 **What goes wrong:** Screen reader users don't know copy succeeded
 **Why it happens:** Visual feedback only, no `aria-live` announcement
 **How to avoid:** Add `role="status"` and `aria-live="polite"` to feedback region
@@ -335,57 +312,39 @@ function renderCopyButton(getSummaryText: () => string): HTMLElement {
 }
 ```
 
-### Keyboard Shortcut Handler with Modifier Detection
+### Focus Preservation During Re-render
 ```typescript
-// Source: WebAIM + MDN keyboard events
-function setupKeyboardShortcuts(actions: {
-  copySummary: () => void;
-  addDiner: () => void;
-  addDish: () => void;
-  toggleHelp: () => void;
-}): void {
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    // Ignore when typing in inputs
-    const target = e.target as HTMLElement;
-    if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
-      return;
-    }
+// Track active element before render
+function render(): void {
+  const activeId = document.activeElement?.id;
+  const activeDataIndex = (document.activeElement as HTMLElement)?.dataset?.index;
+  const activeType = (document.activeElement as HTMLElement)?.dataset?.type;
 
-    // Handle Cmd (Mac) or Ctrl (Windows/Linux)
-    const modifier = e.metaKey || e.ctrlKey;
+  // ... actual render code ...
 
-    switch (true) {
-      // ? shows help (no modifier, following Gmail/GitHub)
-      case e.key === "?" && !modifier && !e.shiftKey:
-        e.preventDefault();
-        actions.toggleHelp();
-        break;
-
-      // Ctrl/Cmd+Shift+C copies summary (avoid conflict with browser copy)
-      case modifier && e.shiftKey && e.key.toLowerCase() === "c":
-        e.preventDefault();
-        actions.copySummary();
-        break;
-
-      // Ctrl/Cmd+D adds diner
-      case modifier && e.key.toLowerCase() === "d":
-        e.preventDefault();
-        actions.addDiner();
-        break;
-
-      // Ctrl/Cmd+I adds dish (item)
-      case modifier && e.key.toLowerCase() === "i":
-        e.preventDefault();
-        actions.addDish();
-        break;
-
-      // Escape closes help
-      case e.key === "Escape":
-        actions.toggleHelp(); // Will close if open
-        break;
-    }
-  });
+  // Restore focus after render
+  if (activeId) {
+    document.getElementById(activeId)?.focus();
+  } else if (activeDataIndex && activeType) {
+    const selector = `[data-index="${activeDataIndex}"][data-type="${activeType}"]`;
+    (document.querySelector(selector) as HTMLElement)?.focus();
+  }
 }
+```
+
+### Enter Key for Quick Add
+```typescript
+// Add Enter key support to diner inputs
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    // Add new diner and focus it
+    state.diners.push("");
+    saveDiners(state.diners);
+    render();
+    focusLastDinerInput();
+  }
+});
 ```
 
 ### Plain Text Summary Generation
@@ -426,62 +385,19 @@ function generatePlainTextSummary(
 }
 ```
 
-### CSS for Help Modal Overlay
+### CSS for Focus States
 ```css
-.help-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+/* Visible focus states for keyboard navigation */
+input:focus,
+button:focus {
+  outline: 2px solid #4a90d9;
+  outline-offset: 2px;
 }
 
-.help-modal {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.help-modal h2 {
-  margin: 0 0 16px 0;
-}
-
-.help-modal table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.help-modal td {
-  padding: 8px 0;
-}
-
-.help-modal td:first-child {
-  width: 50%;
-}
-
-.help-modal kbd {
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 2px 6px;
-  font-family: monospace;
-  font-size: 12px;
-}
-
-.help-modal .close-btn {
-  margin-top: 16px;
-  width: 100%;
-  padding: 8px;
-  background: #4a90d9;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* Optional: different focus style for chips */
+.chip:focus {
+  outline: 2px solid #4a90d9;
+  outline-offset: 1px;
 }
 ```
 
