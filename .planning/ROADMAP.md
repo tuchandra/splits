@@ -34,7 +34,7 @@ Plans:
 - [x] 01-02-PLAN.md - Core split calculation functions with TDD
 
 ### Phase 2: Core UI
-**Goal**: Users can enter a bill, manage friends, and assign items to people
+**Goal**: Users can enter a bill, manage diners, and assign items to people with live calculation updates
 **Depends on**: Phase 1
 **Requirements**: ENTRY-01, ENTRY-02, ENTRY-03, ENTRY-04, ASSIGN-01, ASSIGN-02, ASSIGN-03, ASSIGN-04, FRIEND-01, FRIEND-02, FRIEND-03, UX-01
 **Success Criteria** (what must be TRUE):
@@ -46,12 +46,12 @@ Plans:
   6. User can see which items are unassigned (visual indicator)
   7. User can see running total vs expected total for sanity checking
   8. UI works well on mobile devices (responsive layout)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Friends management (localStorage, add/select participants)
-- [ ] 02-02: Item entry (add/edit/delete items, tax/tip/fees)
-- [ ] 02-03: Item assignment (assign to people, "everyone", unassigned indicator, totals)
+- [ ] 02-01-PLAN.md - State management, localStorage, and diner entry UI
+- [ ] 02-02-PLAN.md - Dish entry with qty/price and bill totals validation
+- [ ] 02-03-PLAN.md - Assignment chips, unassigned warnings, live Individual Shares
 
 ### Phase 3: Polish
 **Goal**: Users can see final results and efficiently use keyboard shortcuts
