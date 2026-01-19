@@ -184,6 +184,103 @@
         text-align: left;
       }
     }
+
+    /* Bill Totals section */
+    .bill-totals-section {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 16px;
+    }
+
+    .totals-display {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+    }
+
+    .total-display-item {
+      font-size: 14px;
+    }
+
+    .total-label {
+      color: #666;
+    }
+
+    .total-value {
+      font-weight: 600;
+      color: #333;
+      margin-left: 4px;
+    }
+
+    .totals-inputs {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .totals-input {
+      width: 100px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .totals-input:focus {
+      outline: none;
+      border-color: #4a90d9;
+      box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+    }
+
+    .totals-input.warning {
+      border-color: #d97706;
+      background-color: #fffbeb;
+    }
+
+    .totals-input.warning:focus {
+      box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+    }
+
+    .warning-message {
+      font-size: 12px;
+      color: #d97706;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    /* Mobile: stack totals inputs */
+    @media (max-width: 500px) {
+      .totals-display {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .totals-inputs {
+        flex-direction: column;
+      }
+
+      .totals-input {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>

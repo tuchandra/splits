@@ -49,6 +49,20 @@ function getDishTotalCents(dish: Dish): number {
 }
 
 /**
+ * Get subtotal of all dishes in cents.
+ */
+function getSubtotalCents(): number {
+  return state.dishes.reduce((sum, dish) => sum + getDishTotalCents(dish), 0);
+}
+
+/**
+ * Get calculated total (subtotal + tax + tip) in cents.
+ */
+function getCalculatedTotalCents(): number {
+  return getSubtotalCents() + state.taxCents + state.tipCents;
+}
+
+/**
  * Render the entire app.
  */
 function render(): void {
@@ -65,6 +79,10 @@ function render(): void {
   // Render Dishes section
   const dishesSection = renderDishesSection();
   app.appendChild(dishesSection);
+
+  // Render Bill Totals section
+  const billTotalsSection = renderBillTotalsSection();
+  app.appendChild(billTotalsSection);
 }
 
 /**
@@ -306,6 +324,133 @@ function renderDishesSection(): HTMLElement {
   });
 
   section.appendChild(addBtn);
+
+  return section;
+}
+
+/**
+ * Render the Bill Totals section with tax, tip, total inputs and validation.
+ */
+function renderBillTotalsSection(): HTMLElement {
+  const section = document.createElement("section");
+  section.className = "bill-totals-section";
+
+  // Header
+  const header = document.createElement("h2");
+  header.textContent = "Bill Totals";
+  section.appendChild(header);
+
+  // Calculated values
+  const subtotalCents = getSubtotalCents();
+  const calculatedTotalCents = getCalculatedTotalCents();
+
+  // Display row for subtotal and calculated total
+  const displayRow = document.createElement("div");
+  displayRow.className = "totals-display";
+
+  const subtotalDisplay = document.createElement("div");
+  subtotalDisplay.className = "total-display-item";
+  subtotalDisplay.innerHTML = `<span class="total-label">Subtotal:</span> <span class="total-value">${formatCents(subtotalCents)}</span>`;
+  displayRow.appendChild(subtotalDisplay);
+
+  const calcTotalDisplay = document.createElement("div");
+  calcTotalDisplay.className = "total-display-item";
+  calcTotalDisplay.innerHTML = `<span class="total-label">Calculated Total:</span> <span class="total-value">${formatCents(calculatedTotalCents)}</span>`;
+  displayRow.appendChild(calcTotalDisplay);
+
+  section.appendChild(displayRow);
+
+  // Input row for tax, tip, total
+  const inputRow = document.createElement("div");
+  inputRow.className = "totals-inputs";
+
+  // Tax input
+  const taxGroup = document.createElement("div");
+  taxGroup.className = "input-group";
+  const taxLabel = document.createElement("label");
+  taxLabel.textContent = "Tax";
+  const taxInput = document.createElement("input");
+  taxInput.type = "number";
+  taxInput.className = "totals-input";
+  taxInput.value = state.taxCents > 0 ? (state.taxCents / 100).toFixed(2) : "";
+  taxInput.placeholder = "0.00";
+  taxInput.step = "0.01";
+  taxInput.min = "0";
+  taxInput.addEventListener("change", (e) => {
+    const val = parseFloat((e.target as HTMLInputElement).value);
+    state.taxCents = isNaN(val) ? 0 : Math.round(val * 100);
+    render();
+  });
+  taxGroup.appendChild(taxLabel);
+  taxGroup.appendChild(taxInput);
+  inputRow.appendChild(taxGroup);
+
+  // Tip input
+  const tipGroup = document.createElement("div");
+  tipGroup.className = "input-group";
+  const tipLabel = document.createElement("label");
+  tipLabel.textContent = "Tip";
+  const tipInput = document.createElement("input");
+  tipInput.type = "number";
+  tipInput.className = "totals-input";
+  tipInput.value = state.tipCents > 0 ? (state.tipCents / 100).toFixed(2) : "";
+  tipInput.placeholder = "0.00";
+  tipInput.step = "0.01";
+  tipInput.min = "0";
+  tipInput.addEventListener("change", (e) => {
+    const val = parseFloat((e.target as HTMLInputElement).value);
+    state.tipCents = isNaN(val) ? 0 : Math.round(val * 100);
+    render();
+  });
+  tipGroup.appendChild(tipLabel);
+  tipGroup.appendChild(tipInput);
+  inputRow.appendChild(tipGroup);
+
+  // Total input (for validation)
+  const totalGroup = document.createElement("div");
+  totalGroup.className = "input-group";
+  const totalLabel = document.createElement("label");
+  totalLabel.textContent = "Total (from receipt)";
+  const totalInput = document.createElement("input");
+  totalInput.type = "number";
+  totalInput.className = "totals-input";
+  totalInput.value = state.enteredTotalCents !== null ? (state.enteredTotalCents / 100).toFixed(2) : "";
+  totalInput.placeholder = "0.00";
+  totalInput.step = "0.01";
+  totalInput.min = "0";
+
+  // Check for mismatch
+  const hasMismatch = state.enteredTotalCents !== null && state.enteredTotalCents !== calculatedTotalCents;
+  if (hasMismatch) {
+    totalInput.classList.add("warning");
+  }
+
+  totalInput.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement;
+    if (target.value === "") {
+      state.enteredTotalCents = null;
+    } else {
+      const val = parseFloat(target.value);
+      state.enteredTotalCents = isNaN(val) ? null : Math.round(val * 100);
+    }
+    render();
+  });
+
+  totalGroup.appendChild(totalLabel);
+  totalGroup.appendChild(totalInput);
+
+  // Warning message
+  if (hasMismatch && state.enteredTotalCents !== null) {
+    const diff = Math.abs(state.enteredTotalCents - calculatedTotalCents);
+    const warningMsg = document.createElement("div");
+    warningMsg.className = "warning-message";
+    warningMsg.textContent = `Off by ${formatCents(diff)}`;
+    totalGroup.appendChild(warningMsg);
+  }
+
+  inputRow.appendChild(totalGroup);
+
+  section.appendChild(inputRow);
 
   return section;
 }
