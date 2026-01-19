@@ -9,6 +9,7 @@ interface Dish {
   name: string
   quantity: number
   priceCents: number
+  priceMode: 'total' | 'each'
   diners: number[]
 }
 
@@ -21,22 +22,37 @@ interface StoredData {
 }
 
 function loadData(): StoredData {
+  const defaultDish = (): Dish => ({
+    id: crypto.randomUUID(),
+    name: '',
+    quantity: 1,
+    priceCents: 0,
+    priceMode: 'total',
+    diners: [],
+  })
+
   const stored = localStorage.getItem(STORAGE_KEY)
   if (!stored) {
     return {
       diners: [],
-      dishes: [{ id: crypto.randomUUID(), name: '', quantity: 1, priceCents: 0, diners: [] }],
+      dishes: [defaultDish()],
       taxCents: 0,
       tipCents: 0,
       totalCents: null,
     }
   }
   try {
-    return JSON.parse(stored) as StoredData
+    const data = JSON.parse(stored) as StoredData
+    // Migrate old dishes without priceMode
+    data.dishes = data.dishes.map(d => ({
+      ...d,
+      priceMode: d.priceMode ?? 'total',
+    }))
+    return data
   } catch {
     return {
       diners: [],
-      dishes: [{ id: crypto.randomUUID(), name: '', quantity: 1, priceCents: 0, diners: [] }],
+      dishes: [defaultDish()],
       taxCents: 0,
       tipCents: 0,
       totalCents: null,
@@ -85,7 +101,7 @@ export default function App() {
   const namedDiners = diners.map((name, idx) => ({ name, idx })).filter(d => d.name.trim())
 
   const addDish = () => {
-    setDishes([...dishes, { id: crypto.randomUUID(), name: '', quantity: 1, priceCents: 0, diners: [] }])
+    setDishes([...dishes, { id: crypto.randomUUID(), name: '', quantity: 1, priceCents: 0, priceMode: 'total', diners: [] }])
   }
 
   const addDiner = () => {
@@ -140,6 +156,36 @@ export default function App() {
     setDishes(newDishes)
   }
 
+  const togglePriceMode = (dishIndex: number) => {
+    const newDishes = [...dishes]
+    const dish = newDishes[dishIndex]
+    if (!dish) return
+
+    const newMode = dish.priceMode === 'total' ? 'each' : 'total'
+
+    // Convert price when toggling
+    if (dish.priceCents > 0 && dish.quantity > 1) {
+      if (newMode === 'each') {
+        // Converting from total to each: divide
+        dish.priceCents = Math.round(dish.priceCents / dish.quantity)
+      } else {
+        // Converting from each to total: multiply
+        dish.priceCents = dish.priceCents * dish.quantity
+      }
+    }
+
+    dish.priceMode = newMode
+    setDishes(newDishes)
+  }
+
+  // Get total cents for a dish based on its price mode
+  const getDishTotalCents = (dish: Dish): number => {
+    if (dish.priceMode === 'each') {
+      return dish.priceCents * dish.quantity
+    }
+    return dish.priceCents
+  }
+
   // Build bill input for calculation
   const buildBillInput = (): BillInput | null => {
     const namedDishes = dishes.filter(d => d.name.trim())
@@ -151,7 +197,7 @@ export default function App() {
       items: namedDishes.map(d => ({
         id: d.id,
         name: d.name,
-        amountCents: d.quantity * d.priceCents,
+        amountCents: getDishTotalCents(d),
         assignedTo: d.diners
           .filter(idx => diners[idx]?.trim())
           .map(idx => diners[idx]!)
@@ -166,7 +212,7 @@ export default function App() {
   const billInput = buildBillInput()
   const result = billInput ? calculateBill(billInput) : null
 
-  const subtotalCents = dishes.reduce((sum, dish) => sum + dish.quantity * dish.priceCents, 0)
+  const subtotalCents = dishes.reduce((sum, dish) => sum + getDishTotalCents(dish), 0)
   const calculatedTotalCents = subtotalCents + taxCents + tipCents
   const hasMismatch = totalCents !== null && totalCents !== calculatedTotalCents
 
@@ -290,22 +336,38 @@ export default function App() {
                       className="border rounded px-3 py-2 w-16 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                       min="1"
                     />
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
-                      <input
-                        type="number"
-                        value={dish.priceCents > 0 ? (dish.priceCents / 100).toFixed(2) : ''}
-                        onChange={(e) => updateDish(dishIndex, 'priceCents', parseDollars(e.target.value))}
-                        onKeyDown={(e) => {
-                          if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
-                        }}
-                        placeholder="0.00"
-                        className="border rounded px-3 py-2 pl-7 w-24 text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        step="0.01"
-                      />
+                    <div className="flex items-center gap-1">
+                      <div className="relative w-24">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                        <input
+                          type="number"
+                          value={dish.priceCents > 0 ? (dish.priceCents / 100).toFixed(2) : ''}
+                          onChange={(e) => updateDish(dishIndex, 'priceCents', parseDollars(e.target.value))}
+                          onKeyDown={(e) => {
+                            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
+                          }}
+                          placeholder="0.00"
+                          className="border rounded px-3 py-2 pl-7 w-full text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          step="0.01"
+                        />
+                      </div>
+                      <button
+                        onClick={() => togglePriceMode(dishIndex)}
+                        className="px-2 py-1 text-xs rounded bg-gray-200 hover:bg-gray-300 whitespace-nowrap"
+                      >
+                        {dish.priceMode === 'total' ? 'total' : 'each'}
+                      </button>
+                      {dish.priceCents > 0 && dish.quantity > 1 && (
+                        <span className="text-sm text-gray-400 whitespace-nowrap">
+                          {dish.priceMode === 'total'
+                            ? `${(dish.priceCents / dish.quantity / 100).toFixed(2)} ea`
+                            : `${(dish.priceCents * dish.quantity / 100).toFixed(2)} tot`
+                          }
+                        </span>
+                      )}
                     </div>
                     <span className="py-2 w-20 text-right font-semibold">
-                      {formatCents(dish.quantity * dish.priceCents)}
+                      {formatCents(getDishTotalCents(dish))}
                     </span>
                     <button
                       onClick={() => removeDish(dishIndex)}
