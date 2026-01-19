@@ -116,6 +116,30 @@ export function allocateProportionally(
 }
 
 /**
+ * Allocate an extra amount (tax/tip/fees) to person shares.
+ * Uses proportional allocation when there are subtotals, otherwise splits evenly.
+ */
+function allocateExtra(
+  amountCents: number,
+  sharesMap: Map<string, PersonShare>,
+  participants: string[],
+  weights: { id: string; weight: number }[],
+  useEvenSplit: boolean,
+  field: "taxCents" | "tipCents" | "feesCents"
+): void {
+  if (amountCents <= 0) return;
+
+  const allocation = useEvenSplit
+    ? splitEvenly(amountCents, participants)
+    : allocateProportionally(amountCents, weights);
+
+  for (const [personId, amount] of allocation) {
+    const share = sharesMap.get(personId);
+    if (share) share[field] = amount;
+  }
+}
+
+/**
  * Calculate bill shares for all participants.
  */
 export function calculateBill(input: BillInput): BillResult {
@@ -172,59 +196,13 @@ export function calculateBill(input: BillInput): BillResult {
     weight: share.subtotalCents,
   }));
 
-  // If all subtotals are zero but we have tax/tip/fees, split evenly
+  // If all subtotals are zero but we have participants, split evenly
   const useEvenSplit = totalSubtotal === 0 && participants.length > 0;
 
-  // Step 3: Allocate tax proportionally (or evenly if zero subtotal)
-  if (taxCents > 0) {
-    if (useEvenSplit) {
-      const taxSplits = splitEvenly(taxCents, participants);
-      for (const [personId, amount] of taxSplits) {
-        const share = sharesMap.get(personId);
-        if (share) share.taxCents = amount;
-      }
-    } else {
-      const taxAllocation = allocateProportionally(taxCents, weights);
-      for (const [personId, amount] of taxAllocation) {
-        const share = sharesMap.get(personId);
-        if (share) share.taxCents = amount;
-      }
-    }
-  }
-
-  // Step 4: Allocate tip proportionally (or evenly if zero subtotal)
-  if (tipCents > 0) {
-    if (useEvenSplit) {
-      const tipSplits = splitEvenly(tipCents, participants);
-      for (const [personId, amount] of tipSplits) {
-        const share = sharesMap.get(personId);
-        if (share) share.tipCents = amount;
-      }
-    } else {
-      const tipAllocation = allocateProportionally(tipCents, weights);
-      for (const [personId, amount] of tipAllocation) {
-        const share = sharesMap.get(personId);
-        if (share) share.tipCents = amount;
-      }
-    }
-  }
-
-  // Step 5: Allocate fees proportionally (or evenly if zero subtotal)
-  if (feesCents > 0) {
-    if (useEvenSplit) {
-      const feesSplits = splitEvenly(feesCents, participants);
-      for (const [personId, amount] of feesSplits) {
-        const share = sharesMap.get(personId);
-        if (share) share.feesCents = amount;
-      }
-    } else {
-      const feesAllocation = allocateProportionally(feesCents, weights);
-      for (const [personId, amount] of feesAllocation) {
-        const share = sharesMap.get(personId);
-        if (share) share.feesCents = amount;
-      }
-    }
-  }
+  // Step 3-5: Allocate tax, tip, and fees
+  allocateExtra(taxCents, sharesMap, participants, weights, useEvenSplit, "taxCents");
+  allocateExtra(tipCents, sharesMap, participants, weights, useEvenSplit, "tipCents");
+  allocateExtra(feesCents, sharesMap, participants, weights, useEvenSplit, "feesCents");
 
   // Step 6: Calculate totals for each person
   for (const share of sharesMap.values()) {
