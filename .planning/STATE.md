@@ -45,7 +45,7 @@ All key decisions logged in PROJECT.md Key Decisions table.
 
 ### Pending Todos
 
-- Enable GitHub Pages in repository settings (Settings > Pages > gh-pages branch)
+None.
 
 ### Blockers/Concerns
 
