@@ -27,11 +27,11 @@ Build a bill splitter that takes manual line item entry, assigns items to friend
   4. Pure function correctly splits shared items evenly among assigned people
   5. Pure function correctly computes final amount per person
   6. All calculation functions have passing unit tests
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Project scaffolding (TypeScript, Bun, build config, GitHub deployment)
-- [ ] 01-02: Core split calculation functions with unit tests
+- [ ] 01-01-PLAN.md - Project scaffolding (TypeScript, Bun, build config, GitHub deployment)
+- [ ] 01-02-PLAN.md - Core split calculation functions with TDD
 
 ### Phase 2: Core UI
 **Goal**: Users can enter a bill, manage friends, and assign items to people
@@ -74,7 +74,7 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 0/2 | Planned | - |
 | 2. Core UI | 0/3 | Not started | - |
 | 3. Polish | 0/2 | Not started | - |
 
