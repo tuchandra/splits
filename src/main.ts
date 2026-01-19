@@ -178,7 +178,8 @@ function renderDinersSection(): HTMLElement {
       const idx = Number(target.dataset.index);
       state.diners[idx] = target.value;
       saveDiners(state.diners);
-      render();
+      // Defer render to let Tab navigation complete first
+      setTimeout(() => render(), 0);
     });
 
     // Enter key adds new diner
@@ -326,7 +327,8 @@ function renderDishesSection(): HTMLElement {
       const target = e.target as HTMLInputElement;
       const idx = Number(target.dataset.index);
       state.dishes[idx]!.name = target.value;
-      render();
+      // Defer render to let Tab navigation complete first
+      setTimeout(() => render(), 0);
     });
 
     // Enter key moves to qty input
@@ -353,7 +355,8 @@ function renderDishesSection(): HTMLElement {
       const val = parseInt(target.value, 10);
       // Allow qty=0 (comped/removed items) but default NaN to 1
       state.dishes[idx]!.quantity = isNaN(val) ? 1 : Math.max(0, val);
-      render();
+      // Defer render to let Tab navigation complete first
+      setTimeout(() => render(), 0);
     });
 
     // Enter key moves to price input
@@ -381,7 +384,8 @@ function renderDishesSection(): HTMLElement {
       const idx = Number(target.dataset.index);
       const val = parseFloat(target.value);
       state.dishes[idx]!.unitPriceCents = isNaN(val) ? 0 : Math.round(val * 100);
-      render();
+      // Defer render to let Tab navigation complete first
+      setTimeout(() => render(), 0);
     });
 
     // Tab/Enter flow: if last row and has name, create new dish; else move to next row
@@ -648,7 +652,8 @@ function renderBillTotalsSection(): HTMLElement {
   taxInput.addEventListener("change", (e) => {
     const val = parseFloat((e.target as HTMLInputElement).value);
     state.taxCents = isNaN(val) ? 0 : Math.round(val * 100);
-    render();
+    // Defer render to let Tab navigation complete first
+    setTimeout(() => render(), 0);
   });
   taxGroup.appendChild(taxLabel);
   taxGroup.appendChild(taxInput);
@@ -668,7 +673,8 @@ function renderBillTotalsSection(): HTMLElement {
   tipInput.addEventListener("change", (e) => {
     const val = parseFloat((e.target as HTMLInputElement).value);
     state.tipCents = isNaN(val) ? 0 : Math.round(val * 100);
-    render();
+    // Defer render to let Tab navigation complete first
+    setTimeout(() => render(), 0);
   });
   tipGroup.appendChild(tipLabel);
   tipGroup.appendChild(tipInput);
@@ -700,7 +706,8 @@ function renderBillTotalsSection(): HTMLElement {
       const val = parseFloat(target.value);
       state.enteredTotalCents = isNaN(val) ? null : Math.round(val * 100);
     }
-    render();
+    // Defer render to let Tab navigation complete first
+    setTimeout(() => render(), 0);
   });
 
   totalGroup.appendChild(totalLabel);
