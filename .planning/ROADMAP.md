@@ -12,7 +12,7 @@ Build a bill splitter that takes manual line item entry, assigns items to friend
 
 - [x] **Phase 1: Foundation** - Project setup and core split calculation logic with tests
 - [x] **Phase 2: Core UI** - Friends management, item entry, and assignment interface
-- [ ] **Phase 3: Polish** - Output display, export, and keyboard shortcuts
+- [x] **Phase 3: Polish** - Output display, export, and keyboard shortcuts
 
 ## Phase Details
 
@@ -64,8 +64,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md - Expandable share breakdown and Copy Summary button
-- [ ] 03-02-PLAN.md - Keyboard entry flow (Enter key, focus preservation)
+- [x] 03-01-PLAN.md - Expandable share breakdown and Copy Summary button
+- [x] 03-02-PLAN.md - Keyboard entry flow (Enter key, focus preservation)
 
 ## Progress
 
@@ -76,7 +76,7 @@ Phases execute in numeric order: 1 -> 2 -> 3
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | Complete | 2026-01-18 |
 | 2. Core UI | 3/3 | Complete | 2026-01-18 |
-| 3. Polish | 0/2 | Not started | - |
+| 3. Polish | 2/2 | Complete | 2026-01-18 |
 
 ---
 *Roadmap created: 2025-01-18*

@@ -27,8 +27,8 @@
 
 ### Output
 
-- [ ] **OUT-01**: User can see final amount each person owes
-- [ ] **OUT-02**: User can export/copy a summary (items, who had them, amounts)
+- [x] **OUT-01**: User can see final amount each person owes
+- [x] **OUT-02**: User can export/copy a summary (items, who had them, amounts)
 
 ### Friends
 
@@ -39,7 +39,7 @@
 ### UX
 
 - [x] **UX-01**: Mobile-friendly responsive design
-- [ ] **UX-02**: Keyboard shortcuts for common actions on desktop
+- [x] **UX-02**: Keyboard shortcuts for common actions on desktop
 
 ## v2 Requirements
 
@@ -72,13 +72,13 @@
 | CALC-01 | Phase 1 | Complete |
 | CALC-02 | Phase 1 | Complete |
 | CALC-03 | Phase 1 | Complete |
-| OUT-01 | Phase 3 | Pending |
-| OUT-02 | Phase 3 | Pending |
+| OUT-01 | Phase 3 | Complete |
+| OUT-02 | Phase 3 | Complete |
 | FRIEND-01 | Phase 2 | Complete |
 | FRIEND-02 | Phase 2 | Complete |
 | FRIEND-03 | Phase 2 | Complete |
 | UX-01 | Phase 2 | Complete |
-| UX-02 | Phase 3 | Pending |
+| UX-02 | Phase 3 | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total
@@ -87,4 +87,4 @@
 
 ---
 *Requirements defined: 2025-01-18*
-*Last updated: 2026-01-18 after Phase 2 completion*
+*Last updated: 2026-01-18 after Phase 3 completion*
