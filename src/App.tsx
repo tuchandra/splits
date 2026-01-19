@@ -69,6 +69,10 @@ function parseDollars(value: string): number {
   return isNaN(parsed) ? 0 : Math.round(parsed * 100)
 }
 
+function centsToDisplay(cents: number): string {
+  return cents > 0 ? (cents / 100).toFixed(2) : ''
+}
+
 export default function App() {
   const [dishes, setDishes] = useState<Dish[]>([])
   const [diners, setDiners] = useState<string[]>([])
@@ -78,6 +82,7 @@ export default function App() {
   const [isLoaded, setIsLoaded] = useState(false)
   const [showBreakdowns, setShowBreakdowns] = useState(false)
   const [copyFeedback, setCopyFeedback] = useState(false)
+  const [activeInputs, setActiveInputs] = useState<Record<string, string>>({})
   const nextDinerRef = useRef<HTMLInputElement>(null)
 
   // Load data on mount
@@ -334,8 +339,13 @@ export default function App() {
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                         <input
                           type="number"
-                          value={dish.priceCents > 0 ? (dish.priceCents / 100).toFixed(2) : ''}
-                          onChange={(e) => updateDish(dishIndex, 'priceCents', parseDollars(e.target.value))}
+                          value={activeInputs[`dish-${dish.id}`] ?? centsToDisplay(dish.priceCents)}
+                          onFocus={(e) => setActiveInputs(prev => ({ ...prev, [`dish-${dish.id}`]: e.target.value }))}
+                          onChange={(e) => setActiveInputs(prev => ({ ...prev, [`dish-${dish.id}`]: e.target.value }))}
+                          onBlur={(e) => {
+                            updateDish(dishIndex, 'priceCents', parseDollars(e.target.value))
+                            setActiveInputs(prev => { const next = { ...prev }; delete next[`dish-${dish.id}`]; return next })
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                           }}
@@ -433,8 +443,13 @@ export default function App() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
                   type="number"
-                  value={taxCents > 0 ? (taxCents / 100).toFixed(2) : ''}
-                  onChange={(e) => setTaxCents(parseDollars(e.target.value))}
+                  value={activeInputs['tax'] ?? centsToDisplay(taxCents)}
+                  onFocus={(e) => setActiveInputs(prev => ({ ...prev, tax: e.target.value }))}
+                  onChange={(e) => setActiveInputs(prev => ({ ...prev, tax: e.target.value }))}
+                  onBlur={(e) => {
+                    setTaxCents(parseDollars(e.target.value))
+                    setActiveInputs(prev => { const next = { ...prev }; delete next.tax; return next })
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                   }}
@@ -450,8 +465,13 @@ export default function App() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
                   type="number"
-                  value={tipCents > 0 ? (tipCents / 100).toFixed(2) : ''}
-                  onChange={(e) => setTipCents(parseDollars(e.target.value))}
+                  value={activeInputs['tip'] ?? centsToDisplay(tipCents)}
+                  onFocus={(e) => setActiveInputs(prev => ({ ...prev, tip: e.target.value }))}
+                  onChange={(e) => setActiveInputs(prev => ({ ...prev, tip: e.target.value }))}
+                  onBlur={(e) => {
+                    setTipCents(parseDollars(e.target.value))
+                    setActiveInputs(prev => { const next = { ...prev }; delete next.tip; return next })
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
                   }}
@@ -467,10 +487,13 @@ export default function App() {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
                   type="number"
-                  value={totalCents !== null ? (totalCents / 100).toFixed(2) : ''}
-                  onChange={(e) => {
+                  value={activeInputs['total'] ?? (totalCents !== null ? (totalCents / 100).toFixed(2) : '')}
+                  onFocus={(e) => setActiveInputs(prev => ({ ...prev, total: e.target.value }))}
+                  onChange={(e) => setActiveInputs(prev => ({ ...prev, total: e.target.value }))}
+                  onBlur={(e) => {
                     const val = e.target.value
                     setTotalCents(val === '' ? null : parseDollars(val))
+                    setActiveInputs(prev => { const next = { ...prev }; delete next.total; return next })
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault()
