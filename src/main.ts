@@ -158,6 +158,14 @@ function renderDinersSection(): HTMLElement {
     dinerList.appendChild(dinerItem);
   });
 
+  // Empty state hint
+  if (state.diners.length === 0) {
+    const emptyHint = document.createElement("div");
+    emptyHint.className = "empty-hint";
+    emptyHint.textContent = "Add diners to get started";
+    dinerList.appendChild(emptyHint);
+  }
+
   section.appendChild(dinerList);
 
   // Add Diner button
@@ -230,14 +238,15 @@ function renderDishesSection(): HTMLElement {
     qtyInput.type = "number";
     qtyInput.className = "dish-qty-input";
     qtyInput.value = String(dish.quantity);
-    qtyInput.min = "1";
+    qtyInput.min = "0";
     qtyInput.dataset.index = String(index);
 
     qtyInput.addEventListener("change", (e) => {
       const target = e.target as HTMLInputElement;
       const idx = Number(target.dataset.index);
       const val = parseInt(target.value, 10);
-      state.dishes[idx]!.quantity = isNaN(val) || val < 1 ? 1 : val;
+      // Allow qty=0 (comped/removed items) but default NaN to 1
+      state.dishes[idx]!.quantity = isNaN(val) ? 1 : Math.max(0, val);
       render();
     });
 
@@ -398,6 +407,14 @@ function renderDishesSection(): HTMLElement {
     dishCard.appendChild(chipsContainer);
     dishList.appendChild(dishCard);
   });
+
+  // Empty state hint
+  if (state.dishes.length === 0) {
+    const emptyHint = document.createElement("div");
+    emptyHint.className = "empty-hint";
+    emptyHint.textContent = "Add dishes to split";
+    dishList.appendChild(emptyHint);
+  }
 
   section.appendChild(dishList);
 
