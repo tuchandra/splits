@@ -50,6 +50,7 @@ Recent decisions affecting current work:
 - Integer cents for all money values (no floating point)
 - Largest remainder method for proportional allocation
 - Round-robin distribution for even splits with remainders
+- No runtime dependencies for logic (inline all utils/math)
 
 ### Pending Todos
 

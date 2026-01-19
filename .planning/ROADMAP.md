@@ -10,7 +10,7 @@ Build a bill splitter that takes manual line item entry, assigns items to friend
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Foundation** - Project setup and core split calculation logic with tests
+- [x] **Phase 1: Foundation** - Project setup and core split calculation logic with tests
 - [ ] **Phase 2: Core UI** - Friends management, item entry, and assignment interface
 - [ ] **Phase 3: Polish** - Output display, export, and keyboard shortcuts
 
@@ -30,8 +30,8 @@ Build a bill splitter that takes manual line item entry, assigns items to friend
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md - Project scaffolding (TypeScript, Bun, build config, GitHub deployment)
-- [ ] 01-02-PLAN.md - Core split calculation functions with TDD
+- [x] 01-01-PLAN.md - Project scaffolding (TypeScript, Bun, build config, GitHub deployment)
+- [x] 01-02-PLAN.md - Core split calculation functions with TDD
 
 ### Phase 2: Core UI
 **Goal**: Users can enter a bill, manage friends, and assign items to people
@@ -74,7 +74,7 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Planned | - |
+| 1. Foundation | 2/2 | Complete | 2026-01-18 |
 | 2. Core UI | 0/3 | Not started | - |
 | 3. Polish | 0/2 | Not started | - |
 

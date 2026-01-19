@@ -58,6 +58,7 @@ Quickly and accurately split a restaurant bill so everyone pays their fair share
 | Static site (no backend) | Simple deployment, no auth needed, ephemeral use case | — Pending |
 | LocalStorage for friends | Persistence without backend, ~10 items is fine | — Pending |
 | Proportional fee distribution | Fairest approach — fees scale with what you ordered | — Pending |
+| No runtime dependencies for logic | Inline all utils/math; keeps bundle tiny, no supply chain risk | Phase 1 |
 
 ---
 *Last updated: 2025-01-18 after initialization*

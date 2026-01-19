@@ -21,9 +21,9 @@
 
 ### Calculation
 
-- [ ] **CALC-01**: Tax/tip/fees divided proportionally by each person's subtotal
-- [ ] **CALC-02**: Shared items split evenly among assigned people
-- [ ] **CALC-03**: Final amount per person calculated correctly
+- [x] **CALC-01**: Tax/tip/fees divided proportionally by each person's subtotal
+- [x] **CALC-02**: Shared items split evenly among assigned people
+- [x] **CALC-03**: Final amount per person calculated correctly
 
 ### Output
 
@@ -69,9 +69,9 @@
 | ASSIGN-02 | Phase 2 | Pending |
 | ASSIGN-03 | Phase 2 | Pending |
 | ASSIGN-04 | Phase 2 | Pending |
-| CALC-01 | Phase 1 | Pending |
-| CALC-02 | Phase 1 | Pending |
-| CALC-03 | Phase 1 | Pending |
+| CALC-01 | Phase 1 | Complete |
+| CALC-02 | Phase 1 | Complete |
+| CALC-03 | Phase 1 | Complete |
 | OUT-01 | Phase 3 | Pending |
 | OUT-02 | Phase 3 | Pending |
 | FRIEND-01 | Phase 2 | Pending |
@@ -87,4 +87,4 @@
 
 ---
 *Requirements defined: 2025-01-18*
-*Last updated: 2025-01-18 after roadmap creation*
+*Last updated: 2026-01-18 after Phase 1 completion*
