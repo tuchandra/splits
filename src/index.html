@@ -91,6 +91,99 @@
     .add-btn:hover {
       background: #f0f7ff;
     }
+
+    /* Dishes section */
+    .dishes-section {
+      background: #fff;
+      padding: 16px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      margin-top: 16px;
+    }
+
+    .dish-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .dish-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: #fafafa;
+      border: 1px solid #eee;
+      border-radius: 6px;
+    }
+
+    .dish-name-input {
+      flex: 1;
+      min-width: 120px;
+      max-width: 200px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .dish-qty-input {
+      width: 60px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .dish-price-input {
+      width: 80px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .dish-name-input:focus,
+    .dish-qty-input:focus,
+    .dish-price-input:focus {
+      outline: none;
+      border-color: #4a90d9;
+      box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
+    }
+
+    .dish-line-total {
+      width: 70px;
+      text-align: right;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    /* Mobile: stack dish inputs */
+    @media (max-width: 500px) {
+      .dish-card {
+        flex-wrap: wrap;
+      }
+
+      .dish-name-input {
+        flex: 1 1 100%;
+        max-width: none;
+      }
+
+      .dish-qty-input,
+      .dish-price-input {
+        flex: 1;
+      }
+
+      .dish-line-total {
+        width: auto;
+        flex: 1;
+        text-align: left;
+      }
+    }
   </style>
 </head>
 <body>
